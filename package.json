@@ -1,0 +1,18 @@
+{
+  "name": "assert",
+  "description": "Node.JS assert module",
+  "keywords": [
+    "ender",
+    "assert"
+  ],
+  "version": "0.4.9",
+  "homepage": "https://github.com/defunctzombie/commonjs-assert",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/defunctzombie/commonjs-assert.git"
+  },
+  "main": "./assert.js",
+  "dependencies": {
+    "util": ">= 0.4.9"
+  }
+}
