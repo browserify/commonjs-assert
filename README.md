@@ -1,5 +1,7 @@
 # assert
 
+[![Build Status](https://travis-ci.org/defunctzombie/commonjs-assert.png?branch=master)](https://travis-ci.org/defunctzombie/commonjs-assert)
+
 This module is used for writing unit tests for your applications, you can access it with require('assert').
 
 The API is derived from the [commonjs 1.0 unit testing](http://wiki.commonjs.org/wiki/Unit_Testing/1.0) spec and the [node.js assert module](http://nodejs.org/api/assert.html)
