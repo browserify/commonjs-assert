@@ -1,6 +1,3 @@
-(function () {
-  "use strict"
-
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -25,15 +22,18 @@
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// UTILITY
-var util = require('util');
+// when used in node, this will actually load the util module we depend on
+// versus loading the builtin util module as happens otherwise
+// this is a bug in node module loading as far as I am concerned
+var util = require('./node_modules/util');
+
 var pSlice = Array.prototype.slice;
 
 // 1. The assert module provides functions that throw
 // AssertionError's when particular conditions are not met. The
 // assert module must conform to the following interface.
 
-var assert = exports;
+var assert = module.exports = ok;
 
 // 2. The AssertionError is defined in assert.
 // new assert.AssertionError({ message: message,
@@ -42,32 +42,52 @@ var assert = exports;
 
 assert.AssertionError = function AssertionError(options) {
   this.name = 'AssertionError';
-  this.message = options.message;
   this.actual = options.actual;
   this.expected = options.expected;
   this.operator = options.operator;
+  if (options.message) {
+    this.message = options.message;
+    this.generatedMessage = false;
+  } else {
+    this.message = getMessage(this);
+    this.generatedMessage = true;
+  }
   var stackStartFunction = options.stackStartFunction || fail;
 
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this, stackStartFunction);
   }
 };
-util.inherits(assert.AssertionError, Error);
-
-assert.AssertionError.prototype.toString = function() {
-  if (this.message) {
-    return [this.name + ':', this.message].join(' ');
-  } else {
-    return [this.name + ':',
-            JSON.stringify(this.expected),
-            this.operator,
-            JSON.stringify(this.actual)].join(' ');
-  }
-};
 
 // assert.AssertionError instanceof Error
+util.inherits(assert.AssertionError, Error);
 
-assert.AssertionError.__proto__ = Error.prototype;
+function replacer(key, value) {
+  if (util.isUndefined(value)) {
+    return '' + value;
+  }
+  if (util.isNumber(value) && (isNaN(value) || !isFinite(value))) {
+    return value.toString();
+  }
+  if (util.isFunction(value) || util.isRegExp(value)) {
+    return value.toString();
+  }
+  return value;
+}
+
+function truncate(s, n) {
+  if (util.isString(s)) {
+    return s.length < n ? s : s.slice(0, n);
+  } else {
+    return s;
+  }
+}
+
+function getMessage(self) {
+  return truncate(JSON.stringify(self.actual, replacer), 128) + ' ' +
+         self.operator + ' ' +
+         truncate(JSON.stringify(self.expected, replacer), 128);
+}
 
 // At present only the three keys mentioned above are used and
 // understood by the spec. Implementations or sub modules can pass
@@ -96,13 +116,14 @@ assert.fail = fail;
 // 4. Pure assertion tests whether a value is truthy, as determined
 // by !!guard.
 // assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, guard,
+// This statement is equivalent to assert.equal(true, !!guard,
 // message_opt);. To test strictly for the value true, use
 // assert.strictEqual(true, guard, message_opt);.
 
-assert.ok = function ok(value, message) {
-  if (!!!value) fail(value, true, message, '==', assert.ok);
-};
+function ok(value, message) {
+  if (!value) fail(value, true, message, '==', assert.ok);
+}
+assert.ok = ok;
 
 // 5. The equality assertion tests shallow, coercive equality with
 // ==.
@@ -135,7 +156,7 @@ function _deepEqual(actual, expected) {
   if (actual === expected) {
     return true;
 
-  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+  } else if (util.isBuffer(actual) && util.isBuffer(expected)) {
     if (actual.length != expected.length) return false;
 
     for (var i = 0; i < actual.length; i++) {
@@ -146,15 +167,25 @@ function _deepEqual(actual, expected) {
 
   // 7.2. If the expected value is a Date object, the actual value is
   // equivalent if it is also a Date object that refers to the same time.
-  } else if (actual instanceof Date && expected instanceof Date) {
+  } else if (util.isDate(actual) && util.isDate(expected)) {
     return actual.getTime() === expected.getTime();
 
-  // 7.3. Other pairs that do not both pass typeof value == 'object',
+  // 7.3 If the expected value is a RegExp object, the actual value is
+  // equivalent if it is also a RegExp object with the same source and
+  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
+  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
+    return actual.source === expected.source &&
+           actual.global === expected.global &&
+           actual.multiline === expected.multiline &&
+           actual.lastIndex === expected.lastIndex &&
+           actual.ignoreCase === expected.ignoreCase;
+
+  // 7.4. Other pairs that do not both pass typeof value == 'object',
   // equivalence is determined by ==.
-  } else if (typeof actual != 'object' && typeof expected != 'object') {
+  } else if (!util.isObject(actual) && !util.isObject(expected)) {
     return actual == expected;
 
-  // 7.4. For all other Object pairs, including Array objects, equivalence is
+  // 7.5 For all other Object pairs, including Array objects, equivalence is
   // determined by having the same number of owned properties (as verified
   // with Object.prototype.hasOwnProperty.call), the same set of keys
   // (although not necessarily the same order), equivalent values for every
@@ -165,16 +196,12 @@ function _deepEqual(actual, expected) {
   }
 }
 
-function isUndefinedOrNull(value) {
-  return value === null || value === undefined;
-}
-
 function isArguments(object) {
   return Object.prototype.toString.call(object) == '[object Arguments]';
 }
 
 function objEquiv(a, b) {
-  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+  if (util.isNullOrUndefined(a) || util.isNullOrUndefined(b))
     return false;
   // an identical 'prototype' property.
   if (a.prototype !== b.prototype) return false;
@@ -248,7 +275,7 @@ function expectedException(actual, expected) {
     return false;
   }
 
-  if (expected instanceof RegExp) {
+  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
     return expected.test(actual);
   } else if (actual instanceof expected) {
     return true;
@@ -262,7 +289,7 @@ function expectedException(actual, expected) {
 function _throws(shouldThrow, block, expected, message) {
   var actual;
 
-  if (typeof expected === 'string') {
+  if (util.isString(expected)) {
     message = expected;
     expected = null;
   }
@@ -277,11 +304,11 @@ function _throws(shouldThrow, block, expected, message) {
             (message ? ' ' + message : '.');
 
   if (shouldThrow && !actual) {
-    fail('Missing expected exception' + message);
+    fail(actual, expected, 'Missing expected exception' + message);
   }
 
   if (!shouldThrow && expectedException(actual, expected)) {
-    fail('Got unwanted exception' + message);
+    fail(actual, expected, 'Got unwanted exception' + message);
   }
 
   if ((shouldThrow && actual && expected &&
@@ -298,10 +325,8 @@ assert.throws = function(block, /*optional*/error, /*optional*/message) {
 };
 
 // EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
+assert.doesNotThrow = function(block, /*optional*/message) {
   _throws.apply(this, [false].concat(pSlice.call(arguments)));
 };
 
 assert.ifError = function(err) { if (err) {throw err;}};
-
-}());

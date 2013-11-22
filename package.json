@@ -13,6 +13,12 @@
   },
   "main": "./assert.js",
   "dependencies": {
-    "util": ">= 0.4.9"
+    "util": "0.10.0"
+  },
+  "devDependencies": {
+    "mocha": "1.14.0"
+  },
+  "scripts": {
+    "test": "mocha --ui qunit test.js"
   }
 }
