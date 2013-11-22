@@ -1,8 +1,7 @@
 {
   "name": "assert",
-  "description": "Node.JS assert module",
+  "description": "commonjs assert - node.js api compatible",
   "keywords": [
-    "ender",
     "assert"
   ],
   "version": "0.4.9",
