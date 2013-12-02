@@ -15,9 +15,10 @@
     "util": "0.10.0"
   },
   "devDependencies": {
+    "zuul": "~1.0.4",
     "mocha": "1.14.0"
   },
   "scripts": {
-    "test": "mocha --ui qunit test.js"
+    "test": "mocha --ui qunit test.js && zuul -- test.js"
   }
 }
