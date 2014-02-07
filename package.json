@@ -18,6 +18,7 @@
     "zuul": "~1.0.9",
     "mocha": "1.14.0"
   },
+  "license": "MIT",
   "scripts": {
     "test": "mocha --ui qunit test.js && zuul -- test.js"
   }
