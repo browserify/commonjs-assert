@@ -12,7 +12,7 @@
   },
   "main": "./assert.js",
   "dependencies": {
-    "util": "0.10.2"
+    "util": "0.10.3"
   },
   "devDependencies": {
     "zuul": "~1.0.9",
