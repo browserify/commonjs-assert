@@ -15,8 +15,8 @@
     "util": "0.10.3"
   },
   "devDependencies": {
-    "zuul": "~1.0.9",
-    "mocha": "1.14.0"
+    "zuul": "~1.10.2",
+    "mocha": "~1.21.4"
   },
   "license": "MIT",
   "scripts": {
