@@ -264,6 +264,11 @@ test('assert - Make sure deepEqual doesn\'t loop forever on circular refs', func
   assert.ok(gotError);
 });
 
+test('assert - Ensure reflexivity of deepEqual with `arguments` objects', function() {
+    var args = (function() { return arguments; })();
+    assert.throws(makeBlock(assert.deepEqual, [], args), assert.AssertionError);
+    assert.throws(makeBlock(assert.deepEqual, args, []), assert.AssertionError);
+});
 
 test('assert - test assertion message', function () {
   function testAssertionMessage(actual, expected) {
