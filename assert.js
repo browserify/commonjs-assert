@@ -339,7 +339,7 @@ function _throws(shouldThrow, block, expected, message) {
 // 11. Expected to throw an error:
 // assert.throws(block, Error_opt, message_opt);
 
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
+assert["throws"] = function(block, /*optional*/error, /*optional*/message) {
   _throws.apply(this, [true].concat(pSlice.call(arguments)));
 };
 
