@@ -21,5 +21,12 @@
   "license": "MIT",
   "scripts": {
     "test": "mocha --ui qunit test.js && zuul -- test.js"
+  },
+  "jspm": {
+    "map": {
+      "./assert.js": {
+        "node": "@node/assert"
+      }
+    }
   }
 }
