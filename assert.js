@@ -1,7 +1,5 @@
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
-// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
-//
 // Originally from narwhal.js (http://narwhaljs.org)
 // Copyright (c) 2009 Thomas Robinson <280north.com>
 //
