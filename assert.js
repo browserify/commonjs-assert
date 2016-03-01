@@ -34,6 +34,9 @@ var hasOwn = Object.prototype.hasOwnProperty;
 
 var assert = module.exports = ok;
 
+// Monkey patch this function if you need to add some custom logging
+assert.handleMessage = function(msg) {};
+
 // 2. The AssertionError is defined in assert.
 // new assert.AssertionError({ message: message,
 //                             actual: actual,
@@ -51,6 +54,9 @@ assert.AssertionError = function AssertionError(options) {
     this.message = getMessage(this);
     this.generatedMessage = true;
   }
+
+  assert.handleMessage(this.message);
+
   var stackStartFunction = options.stackStartFunction || fail;
 
   if (Error.captureStackTrace) {

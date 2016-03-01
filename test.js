@@ -30,6 +30,16 @@ function makeBlock(f) {
   };
 }
 
+test('assert.handleMessage is called', function () {
+  var _assert = require('./');
+  var isCalled = false;
+  _assert.handleMessage = function(msg) {
+    isCalled = true;
+  };
+  assert.throws(makeBlock(_assert.fail), assert.AssertionError);
+  assert(isCalled);
+});
+
 test('assert.ok', function () {
   assert.throws(makeBlock(assert, false), assert.AssertionError, 'ok(false)');
 
