@@ -75,6 +75,16 @@ test('assert.strictEqual', function () {
   assert.doesNotThrow(makeBlock(assert.notStrictEqual, 2, '2'), 'notStrictEqual');
 });
 
+test('assert.deepStrictEqual', function () {
+  assert.throws(makeBlock(assert.deepStrictEqual, [2], ['2']),
+                assert.AssertionError, 'deepStrictEqual');
+
+  assert.throws(makeBlock(assert.deepStrictEqual, [null], [undefined]),
+                assert.AssertionError, 'deepStrictEqual');
+
+  assert.doesNotThrow(makeBlock(assert.notDeepStrictEqual, [2], ['2']), 'notDeepStrictEqual');
+});
+
 test('assert.deepEqual - 7.2', function () {
   assert.doesNotThrow(makeBlock(assert.deepEqual, new Date(2000, 3, 14),
                       new Date(2000, 3, 14)), 'deepEqual date');
