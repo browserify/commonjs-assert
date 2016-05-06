@@ -169,7 +169,13 @@ assert.deepEqual = function deepEqual(actual, expected, message) {
   }
 };
 
-function _deepEqual(actual, expected) {
+assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
+  if (!_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
+  }
+};
+
+function _deepEqual(actual, expected, strict) {
   // 7.1. All identical values are equivalent, as determined by ===.
   if (actual === expected) {
     return true;
@@ -201,7 +207,7 @@ function _deepEqual(actual, expected) {
   // 7.4. Other pairs that do not both pass typeof value == 'object',
   // equivalence is determined by ==.
   } else if (!util.isObject(actual) && !util.isObject(expected)) {
-    return actual == expected;
+    return strict ? actual === expected : actual == expected;
 
   // 7.5 For all other Object pairs, including Array objects, equivalence is
   // determined by having the same number of owned properties (as verified
@@ -210,7 +216,7 @@ function _deepEqual(actual, expected) {
   // corresponding key, and an identical 'prototype' property. Note: this
   // accounts for both named and indexed properties on Arrays.
   } else {
-    return objEquiv(actual, expected);
+    return objEquiv(actual, expected, strict);
   }
 }
 
@@ -218,7 +224,7 @@ function isArguments(object) {
   return Object.prototype.toString.call(object) == '[object Arguments]';
 }
 
-function objEquiv(a, b) {
+function objEquiv(a, b, strict) {
   if (util.isNullOrUndefined(a) || util.isNullOrUndefined(b))
     return false;
   // an identical 'prototype' property.
@@ -234,7 +240,7 @@ function objEquiv(a, b) {
   if (aIsArgs) {
     a = pSlice.call(a);
     b = pSlice.call(b);
-    return _deepEqual(a, b);
+    return _deepEqual(a, b, strict);
   }
   var ka = objectKeys(a),
       kb = objectKeys(b),
@@ -255,7 +261,7 @@ function objEquiv(a, b) {
   //~~~possibly expensive deep test
   for (i = ka.length - 1; i >= 0; i--) {
     key = ka[i];
-    if (!_deepEqual(a[key], b[key])) return false;
+    if (!_deepEqual(a[key], b[key], strict)) return false;
   }
   return true;
 }
@@ -266,6 +272,12 @@ function objEquiv(a, b) {
 assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
   if (_deepEqual(actual, expected)) {
     fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
+  }
+};
+
+assert.notDeepStrictEqual = function notDeepStrictEqual(actual, expected, message) {
+  if (_deepEqual(actual, expected, true)) {
+    fail(actual, expected, message, 'notDeepStrictEqual', assert.notDeepStrictEqual);
   }
 };
 
