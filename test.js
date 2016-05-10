@@ -22,8 +22,12 @@
 var nodeAssert = require('assert');
 var ourAssert = require('./');
 var keys = Object.keys;
-tests(nodeAssert, 'node assert');
-tests(ourAssert, 'our assert');
+if (process.env.TEST_NATIVE === true) {
+  tests(nodeAssert, 'node assert');
+} else {
+  tests(ourAssert, 'our assert');
+}
+
 function makeBlock(f) {
   var args = Array.prototype.slice.call(arguments, 1);
   return function() {
@@ -32,9 +36,6 @@ function makeBlock(f) {
 }
 
 function tests (assert, what) {
-    test(what, function () {
-      assert.ok(true);
-    });
     test('assert.ok', function () {
       assert.throws(makeBlock(assert, false), assert.AssertionError, 'ok(false)');
 
@@ -144,36 +145,6 @@ function tests (assert, what) {
                 assert.AssertionError);
       assert.doesNotThrow(makeBlock(assert.deepEqual, a1, a2));
     });
-
-    // test('assert.deepEqual - instances', function () {
-    //   // having an identical prototype property
-    //   var nbRoot = {
-    //     toString: function() { return this.first + ' ' + this.last; }
-    //   };
-    //
-    //   function nameBuilder(first, last) {
-    //     this.first = first;
-    //     this.last = last;
-    //     return this;
-    //   }
-    //   nameBuilder.prototype = nbRoot;
-    //
-    //   function nameBuilder2(first, last) {
-    //     this.first = first;
-    //     this.last = last;
-    //     return this;
-    //   }
-    //   nameBuilder2.prototype = nbRoot;
-    //
-    //   var nb1 = new nameBuilder('Ryan', 'Dahl');
-    //   var nb2 = new nameBuilder2('Ryan', 'Dahl');
-    //
-    //   assert.doesNotThrow(makeBlock(assert.deepEqual, nb1, nb2));
-    //
-    //   nameBuilder2.prototype = Object;
-    //   nb2 = new nameBuilder2('Ryan', 'Dahl');
-    //   assert.throws(makeBlock(assert.deepEqual, nb1, nb2), assert.AssertionError);
-    // });
 
     test('assert.deepEqual - ES6 primitives', function () {
       assert.throws(makeBlock(assert.deepEqual, null, {}), assert.AssertionError);

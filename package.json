@@ -12,8 +12,8 @@
   },
   "main": "./assert.js",
   "dependencies": {
-    "buffer-shims": "^1.0.0",
-    "util": "^0.10.3"
+    "buffer-shims": "1.0.0",
+    "util": "0.10.3"
   },
   "devDependencies": {
     "zuul": "~3.9.0",
@@ -21,6 +21,9 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "mocha --ui qunit test.js && zuul -- test.js"
+    "test-node": "mocha --ui qunit test.js",
+    "test-browser": "zuul -- test.js",
+    "test": "npm run test-node && npm run test-browser",
+    "test-native": "TEST_NATIVE=true mocha --ui qunit test.js"
   }
 }
