@@ -51,7 +51,24 @@ var pSlice = Array.prototype.slice;
 function pToString (obj) {
   return Object.prototype.toString.call(obj);
 }
-
+function isView(arrbuf) {
+  if (typeof global.ArrayBuffer !== 'function') {
+    return false;
+  }
+  if (typeof ArrayBuffer.isView === 'function') {
+    return ArrayBuffer.isView(arrbuf);
+  }
+  if (!arrbuf) {
+    return false;
+  }
+  if (arrbuf instanceof DataView) {
+    return true;
+  }
+  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
+    return true;
+  }
+  return false;
+}
 // 1. The assert module provides functions that throw
 // AssertionError's when particular conditions are not met. The
 // assert module must conform to the following interface.
@@ -218,7 +235,7 @@ function _deepEqual(actual, expected, strict, memos) {
   // Object.prototype.toString (aka pToString). Never perform binary
   // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
   // bit patterns are not identical.
-  } else if (ArrayBuffer.isView(actual) && ArrayBuffer.isView(expected) &&
+  } else if (isView(actual) && isView(expected) &&
              pToString(actual) === pToString(expected) &&
              !(actual instanceof Float32Array ||
                actual instanceof Float64Array)) {
