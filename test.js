@@ -165,6 +165,16 @@ function tests (assert, what) {
       assert.doesNotThrow(makeBlock(assert.deepEqual, new Boolean(true), {}));
     });
 
+    test('assert.deepEqual - Buffers', function () {
+      assert.doesNotThrow(makeBlock(assert.deepEqual, new Buffer([1, 2, 3]), new Buffer([1, 2, 3])));
+      if (typeof global.Uint8Array === 'function') {
+        assert.throws(makeBlock(assert.deepEqual, new Buffer([1, 2, 3]), new Uint8Array([1, 2, 3])));
+      }
+      if (typeof global.Uint16Array === 'function') {
+        assert.doesNotThrow(makeBlock(assert.deepEqual, new Uint16Array([1, 2, 3]), new Uint16Array([1, 2, 3])));
+      }
+    });
+
     function thrower(errorConstructor) {
       throw new errorConstructor('test');
     }
@@ -294,6 +304,11 @@ function tests (assert, what) {
       testAssertionMessage('foo', '\'foo\'');
       testAssertionMessage([], '[]');
       testAssertionMessage([1, 2, 3], '[ 1, 2, 3 ]');
+      testAssertionMessage(new Buffer([1, 2, 3]), '<Buffer 01 02 03>');
+      if (typeof global.Uint8Array === 'function' && Object.getOwnPropertyNames( new Uint8Array([])).length === 0) {
+        // todo fix util.inspect
+        testAssertionMessage(new Uint8Array([1, 2, 3]), '{ \'0\': 1, \'1\': 2, \'2\': 3 }');
+      }
       testAssertionMessage(/a/, '/a/');
       testAssertionMessage(function f() {}, '[Function: f]');
       testAssertionMessage({}, '{}');

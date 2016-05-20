@@ -1,3 +1,47 @@
+'use strict';
+
+// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
+// original notice:
+
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+function compare(a, b) {
+  if (a === b) {
+    return 0;
+  }
+
+  var x = a.length;
+  var y = b.length;
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break;
+    }
+  }
+
+  if (x < y) {
+    return -1;
+  }
+  if (y < x) {
+    return 1;
+  }
+  return 0;
+}
+function isBuffer(b) {
+  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
+    return global.Buffer.isBuffer(b);
+  }
+  return !!(b != null && b._isBuffer);
+}
+
+// based on node assert, original notice:
+
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -22,30 +66,7 @@
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-'use strict';
-
-// UTILITY
-function compare(bufa, bufb) {
-  var cmpLen = Math.min(bufa, bufb);
-  if (cmpLen <= 0) {
-    return 0;
-  }
-  var i = -1;
-  var a,b;
-  while (++i < cmpLen) {
-    a = bufa[i];
-    b = bufb[i];
-    if (a < b) {
-      return -1;
-    } else if (a > b) {
-      return 1;
-    }
-  }
-  return 0;
-}
 var util = require('util/');
-var Buffer = require('buffer').Buffer;
-var BufferShim = require('buffer-shims');
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -55,6 +76,9 @@ function pToString (obj) {
   return Object.prototype.toString.call(obj);
 }
 function isView(arrbuf) {
+  if (isBuffer(arrbuf)) {
+    return false;
+  }
   if (typeof global.ArrayBuffer !== 'function') {
     return false;
   }
@@ -110,25 +134,25 @@ assert.AssertionError = function AssertionError(options) {
   }
   var stackStartFunction = options.stackStartFunction || fail;
   if (Error.captureStackTrace) {
-   Error.captureStackTrace(this, stackStartFunction);
- } else {
-   // non v8 browsers so we can have a stacktrace
-   var err = new Error();
-   if (err.stack) {
-     var out = err.stack;
+    Error.captureStackTrace(this, stackStartFunction);
+  } else {
+    // non v8 browsers so we can have a stacktrace
+    var err = new Error();
+    if (err.stack) {
+      var out = err.stack;
 
-     // try to strip useless frames
-     var fn_name = getName(stackStartFunction);
-     var idx = out.indexOf('\n' + fn_name);
-     if (idx >= 0) {
-       // once we have located the function frame
-       // we need to strip out everything before it (and its line)
-       var next_line = out.indexOf('\n', idx + 1);
-       out = out.substring(next_line + 1);
-     }
+      // try to strip useless frames
+      var fn_name = getName(stackStartFunction);
+      var idx = out.indexOf('\n' + fn_name);
+      if (idx >= 0) {
+        // once we have located the function frame
+        // we need to strip out everything before it (and its line)
+        var next_line = out.indexOf('\n', idx + 1);
+        out = out.substring(next_line + 1);
+      }
 
-     this.stack = out;
-   }
+      this.stack = out;
+    }
   }
 };
 
@@ -228,7 +252,7 @@ function _deepEqual(actual, expected, strict, memos) {
   // 7.1. All identical values are equivalent, as determined by ===.
   if (actual === expected) {
     return true;
-  } else if (Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+  } else if (isBuffer(actual) && isBuffer(expected)) {
     return compare(actual, expected) === 0;
 
   // 7.2. If the expected value is a Date object, the actual value is
@@ -262,8 +286,8 @@ function _deepEqual(actual, expected, strict, memos) {
              pToString(actual) === pToString(expected) &&
              !(actual instanceof Float32Array ||
                actual instanceof Float64Array)) {
-    return compare(BufferShim.from(actual.buffer),
-                   BufferShim.from(expected.buffer)) === 0;
+    return compare(new Uint8Array(actual.buffer),
+                   new Uint8Array(expected.buffer)) === 0;
 
   // 7.5 For all other Object pairs, including Array objects, equivalence is
   // determined by having the same number of owned properties (as verified
@@ -271,6 +295,8 @@ function _deepEqual(actual, expected, strict, memos) {
   // (although not necessarily the same order), equivalent values for every
   // corresponding key, and an identical 'prototype' property. Note: this
   // accounts for both named and indexed properties on Arrays.
+  } else if (isBuffer(actual) !== isBuffer(expected)) {
+    return false;
   } else {
     memos = memos || {actual: [], expected: []};
 
