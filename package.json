@@ -12,6 +12,7 @@
   },
   "main": "./assert.js",
   "dependencies": {
+    "buffer": "^4.6.0",
     "buffer-shims": "1.0.0",
     "util": "0.10.3"
   },
