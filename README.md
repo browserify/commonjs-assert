@@ -21,6 +21,9 @@ Tests shallow, coercive non-equality with the not equal comparison operator ( !=
 ## assert.deepEqual(actual, expected, [message])
 Tests for deep equality.
 
+## assert.deepStrictEqual(actual, expected, [message])
+Tests for deep equality, as determined by the strict equality operator ( === )
+
 ## assert.notDeepEqual(actual, expected, [message])
 Tests for any deep inequality.
 
