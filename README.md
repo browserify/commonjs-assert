@@ -2,9 +2,10 @@
 
 [![Build Status](https://travis-ci.org/defunctzombie/commonjs-assert.svg?branch=master)](https://travis-ci.org/defunctzombie/commonjs-assert)
 
-This module is used for writing unit tests for your applications, you can access it with require('assert').
+This module is used for writing unit tests for your applications, you can access it with `require('assert')`.
 
-The API is derived from the [commonjs 1.0 unit testing](http://wiki.commonjs.org/wiki/Unit_Testing/1.0) spec and the [node.js assert module](http://nodejs.org/api/assert.html)
+It aims to be fully compatibe with the [node.js assert module](http://nodejs.org/api/assert.html), same API and same behavior, just adding support for web browsers.
+The API and code may contain traces of the [CommonJS Unit Testing 1.0 spec](http://wiki.commonjs.org/wiki/Unit_Testing/1.0) which they were based on, but both have evolved significantly since then.
 
 ## assert.fail(actual, expected, message, operator)
 Throws an exception that displays the values for actual and expected separated by the provided operator.

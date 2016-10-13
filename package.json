@@ -1,8 +1,9 @@
 {
   "name": "assert",
-  "description": "commonjs assert - node.js api compatible",
+  "description": "The node.js assert module, re-packaged for web browsers.",
   "keywords": [
-    "assert"
+    "assert",
+    "browser"
   ],
   "version": "1.4.1",
   "homepage": "https://github.com/defunctzombie/commonjs-assert",
