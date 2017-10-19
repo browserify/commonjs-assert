@@ -194,6 +194,21 @@ function getMessage(self) {
 // display purposes.
 
 function fail(actual, expected, message, operator, stackStartFunction) {
+  if (!expected && !message && !operator) {
+    if (actual) {
+      message = actual
+    }
+    else {
+      message = "Failed"
+    }
+  }
+  else if (actual && expected && !operator) {
+    operator = "!="
+  }
+
+  if (actual && expected && !message) {
+    message = actual.toString() + " " + operator.toString() + " " + expected.toString();
+  }
   throw new assert.AssertionError({
     message: message,
     actual: actual,

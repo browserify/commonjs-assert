@@ -342,4 +342,88 @@ function tests (assert, what) {
         assert.equal(e.toString().split('\n')[0], 'AssertionError: oh no');
       }
     });
+
+    test('assert.fail - actual, expected, operator', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail(1, 2, undefined, ">");
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "1 > 2")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
+
+    test('assert.fail - actual, expected, message', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail(1, 2, 'fail');
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "fail")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
+
+    test('assert.fail - actual, expected, message, operator', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail(1, 2, 'whoops', '>');
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "whoops")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
+
+    test('assert.fail - (no parameters)', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail();
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "Failed")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
+
+    test('assert.fail - message', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail("boom");
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "boom")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
+
+    test('assert.fail - actual, expected', function() {
+      var threw;
+
+      try {
+        threw = false;
+        assert.fail('a', 'b');
+      }
+      catch(e) {
+        threw = true
+        assert.equal(e.message, "a != b")
+      }
+      assert.ok(threw, "Error was not thrown.");
+    })
 }
