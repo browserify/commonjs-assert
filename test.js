@@ -307,7 +307,7 @@ function tests (assert, what) {
       testAssertionMessage(new Buffer([1, 2, 3]), '<Buffer 01 02 03>');
       if (typeof global.Uint8Array === 'function' && Object.getOwnPropertyNames( new Uint8Array([])).length === 0) {
         // todo fix util.inspect
-        testAssertionMessage(new Uint8Array([1, 2, 3]), '{ \'0\': 1, \'1\': 2, \'2\': 3 }');
+        testAssertionMessage(new Uint8Array([1, 2, 3]), 'Uint8Array [ 1, 2, 3 ]');
       }
       testAssertionMessage(/a/, '/a/');
       testAssertionMessage(function f() {}, '[Function: f]');

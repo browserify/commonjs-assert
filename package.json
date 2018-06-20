@@ -12,9 +12,6 @@
     "url": "git://github.com/defunctzombie/commonjs-assert.git"
   },
   "main": "./assert.js",
-  "dependencies": {
-    "util": "0.10.3"
-  },
   "devDependencies": {
     "mocha": "~1.21.4",
     "zuul": "~3.10.0",
