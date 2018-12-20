@@ -69,11 +69,61 @@ function isBuffer(b) {
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var util = require('util/');
+
+var ONLY_ENUMERABLE = 2;
+//Variables/functions use in comparison functions
+const kStrict = true;
+const kLoose = false;
+const kNoIterator = 0;
+const kIsArray = 1;
+const kIsSet = 2;
+const kIsMap = 3;
+const objectIs = Object.is;
+const ReflectApply = Reflect.apply;
+const getPrototypeOf = Object.getPrototypeOf;
+const objectToString = uncurryThis(Object.prototype.toString);
+function uncurryThis(func) {
+  return (thisArg, ...args) => ReflectApply(func, thisArg, args);
+}
+const dateGetTime = uncurryThis(Date.prototype.getTime);
+// Check if they have the same source and flags
+function areSimilarRegExps(a, b) {
+  return a.source === b.source && a.flags === b.flags;
+}
+function areSimilarTypedArrays(a, b) {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+  return compare(new Uint8Array(a.buffer, a.byteOffset, a.byteLength),
+                 new Uint8Array(b.buffer, b.byteOffset, b.byteLength)) === 0;
+}
+function areSimilarFloatArrays(a, b) {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+  for (var offset = 0; offset < a.byteLength; offset++) {
+    if (a[offset] !== b[offset]) {
+      return false;
+    }
+  }
+  return true;
+}
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
+  function getOwnPropertyDescriptors(obj) {
+    var keys = Object.keys(obj);
+    var descriptors = {};
+    for (var i = 0; i < keys.length; i++) {
+      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+    }
+    return descriptors;
+  };
+//Variable for use in AssertionError
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
   return function foo() {}.name === 'foo';
 }());
+const errorCache = new Map();
 function pToString (obj) {
   return Object.prototype.toString.call(obj);
 }
@@ -122,6 +172,287 @@ function getName(func) {
   var match = str.match(regex);
   return match && match[1];
 }
+
+//Comparison functions
+function keyCheck(val1, val2, strict, memos, iterationType, aKeys) {
+  // For all remaining Object pairs, including Array, objects and Maps,
+  // equivalence is determined by having:
+  // a) The same number of owned enumerable properties
+  // b) The same set of keys/indexes (although not necessarily the same order)
+  // c) Equivalent values for every corresponding key/index
+  // d) For Sets and Maps, equal contents
+  // Note: this accounts for both named and indexed properties on Arrays.
+  if (arguments.length === 5) {
+    aKeys = objectKeys(val1);
+    const bKeys = objectKeys(val2);
+
+    // The pair must have the same number of owned properties.
+    if (aKeys.length !== bKeys.length) {
+      return false;
+    }
+  }
+
+  // Cheap key test
+  let i = 0;
+  for (; i < aKeys.length; i++) {
+    if (!hasOwnProperty(val2, aKeys[i])) {
+      return false;
+    }
+  }
+
+  if (strict && arguments.length === 5) {
+    const symbolKeysA = getOwnPropertySymbols(val1);
+    if (symbolKeysA.length !== 0) {
+      let count = 0;
+      for (i = 0; i < symbolKeysA.length; i++) {
+        const key = symbolKeysA[i];
+        if (propertyIsEnumerable(val1, key)) {
+          if (!propertyIsEnumerable(val2, key)) {
+            return false;
+          }
+          aKeys.push(key);
+          count++;
+        } else if (propertyIsEnumerable(val2, key)) {
+          return false;
+        }
+      }
+      const symbolKeysB = getOwnPropertySymbols(val2);
+      if (symbolKeysA.length !== symbolKeysB.length &&
+          getEnumerables(val2, symbolKeysB).length !== count) {
+        return false;
+      }
+    } else {
+      const symbolKeysB = getOwnPropertySymbols(val2);
+      if (symbolKeysB.length !== 0 &&
+          getEnumerables(val2, symbolKeysB).length !== 0) {
+        return false;
+      }
+    }
+  }
+
+  if (aKeys.length === 0 &&
+      (iterationType === kNoIterator ||
+        iterationType === kIsArray && val1.length === 0 ||
+        val1.size === 0)) {
+    return true;
+  }
+
+  // Use memos to handle cycles.
+  if (memos === undefined) {
+    memos = {
+      val1: new Map(),
+      val2: new Map(),
+      position: 0
+    };
+  } else {
+    // We prevent up to two map.has(x) calls by directly retrieving the value
+    // and checking for undefined. The map can only contain numbers, so it is
+    // safe to check for undefined only.
+    const val2MemoA = memos.val1.get(val1);
+    if (val2MemoA !== undefined) {
+      const val2MemoB = memos.val2.get(val2);
+      if (val2MemoB !== undefined) {
+        return val2MemoA === val2MemoB;
+      }
+    }
+    memos.position++;
+  }
+
+  memos.val1.set(val1, memos.position);
+  memos.val2.set(val2, memos.position);
+
+  const areEq = objEquiv(val1, val2, strict, aKeys, memos, iterationType);
+
+  memos.val1.delete(val1);
+  memos.val2.delete(val2);
+
+  return areEq;
+}
+
+function strictDeepEqual(val1, val2, memos) {
+  if (typeof val1 !== 'object') {
+    return typeof val1 === 'number' && numberIsNaN(val1) &&
+      numberIsNaN(val2);
+  }
+  if (typeof val2 !== 'object' || val1 === null || val2 === null) {
+    return false;
+  }
+  const val1Tag = objectToString(val1);
+  const val2Tag = objectToString(val2);
+
+  if (val1Tag !== val2Tag) {
+    return false;
+  }
+  if (getPrototypeOf(val1) !== getPrototypeOf(val2)) {
+    return false;
+  }
+  if (Array.isArray(val1)) {
+    // Check for sparse arrays and general fast path
+    if (val1.length !== val2.length) {
+      return false;
+    }
+    const keys1 = getOwnPropertyDescriptors(val1, ONLY_ENUMERABLE);
+    const keys2 = getOwnPropertyDescriptors(val2, ONLY_ENUMERABLE);
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+    return keyCheck(val1, val2, kStrict, memos, kIsArray, keys1);
+  }
+  if (val1Tag === '[object Object]') {
+    return keyCheck(val1, val2, kStrict, memos, kNoIterator);
+  }
+  if (util.isDate(val1)) {
+    if (dateGetTime(val1) !== dateGetTime(val2)) {
+      return false;
+    }
+  } else if (util.isRegExp(val1)) {
+    if (!areSimilarRegExps(val1, val2)) {
+      return false;
+    }
+  } else if (util.isError(val1) || val1 instanceof Error) {
+    // Do not compare the stack as it might differ even though the error itself
+    // is otherwise identical. The non-enumerable name should be identical as
+    // the prototype is also identical. Otherwise this is caught later on.
+    if (val1.message !== val2.message) {
+      return false;
+    }
+  } else if (isView(val1)) {
+    if (!areSimilarTypedArrays(val1, val2)) {
+      return false;
+    }
+    // Buffer.compare returns true, so val1.length === val2.length. If they both
+    // only contain numeric keys, we don't need to exam further than checking
+    // the symbols.
+    const keys1 = getOwnPropertyDescriptors(val1, ONLY_ENUMERABLE);
+    const keys2 = getOwnPropertyDescriptors(val2, ONLY_ENUMERABLE);
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+    return keyCheck(val1, val2, kStrict, memos, kNoIterator, keys1);
+  } else if (isBuffer(val1)) {
+    if (!isBuffer(val2) || val1.size !== val2.size) {
+      return false;
+    }
+    return keyCheck(val1, val2, kStrict, memos, kIsSet);
+  } else if (util.isObject(val1)) {
+    if (!util.isObject(val2) || val1.size !== val2.size) {
+      return false;
+    }
+    return keyCheck(val1, val2, kStrict, memos, kIsMap);
+  } else if (isAnyArrayBuffer(val1)) {
+    if (!areEqualArrayBuffers(val1, val2)) {
+      return false;
+    }
+  } else if (isBoxedPrimitive(val1) && !isEqualBoxedPrimitive(val1, val2)) {
+    return false;
+  }
+  return keyCheck(val1, val2, kStrict, memos, kNoIterator);
+}
+
+function isDeepEqual(val1, val2) {
+  return innerDeepEqual(val1, val2, kLoose);
+}
+
+function innerDeepEqual(val1, val2, strict, memos) {
+  // All identical values are equivalent, as determined by ===.
+  if (val1 === val2) {
+    if (val1 !== 0)
+      return true;
+    return strict ? objectIs(val1, val2) : true;
+  }
+
+  // Check more closely if val1 and val2 are equal.
+  if (strict === true)
+    return strictDeepEqual(val1, val2, memos);
+
+  return looseDeepEqual(val1, val2, memos);
+}
+
+function looseDeepEqual(val1, val2, memos) {
+  if (val1 === null || typeof val1 !== 'object') {
+    if (val2 === null || typeof val2 !== 'object') {
+      // eslint-disable-next-line eqeqeq
+      return val1 == val2;
+    }
+    return false;
+  }
+  if (val2 === null || typeof val2 !== 'object') {
+    return false;
+  }
+  const val1Tag = objectToString(val1);
+  const val2Tag = objectToString(val2);
+  if (val1Tag === val2Tag) {
+    if (isObjectOrArrayTag(val1Tag)) {
+      return keyCheck(val1, val2, kLoose, memos, kNoIterator);
+    }
+    if (isArrayBufferView(val1)) {
+      if (isFloatTypedArrayTag(val1Tag)) {
+        return areSimilarFloatArrays(val1, val2);
+      }
+      return areSimilarTypedArrays(val1, val2);
+    }
+    if (util.isDate(val1) && util.isDate(val2)) {
+      return val1.getTime() === val2.getTime();
+    }
+    if (util.isRegExp(val1) && util.isRegExp(val2)) {
+      return areSimilarRegExps(val1, val2);
+    }
+    if (val1 instanceof Error && val2 instanceof Error) {
+      if (val1.message !== val2.message || val1.name !== val2.name)
+        return false;
+    }
+  // Ensure reflexivity of deepEqual with `arguments` objects.
+  // See https://github.com/nodejs/node-v0.x-archive/pull/7178
+  } else if (isArguments(val1Tag) || isArguments(val2Tag)) {
+    return false;
+  }
+  if (util.isArray(val1)) {
+    if (!util.isArray(val2) || val1.size !== val2.size) {
+      return false;
+    }
+    return keyCheck(val1, val2, kLoose, memos, kIsSet);
+  } else if (util.isObject(val1)) {
+    if (!util.isObject(val2) || val1.size !== val2.size) {
+      return false;
+    }
+    return keyCheck(val1, val2, kLoose, memos, kIsMap);
+  } else if (util.isArray(val2) || util.isObject(val2)) {
+    return false;
+  }
+  if (isAnyArrayBuffer(val1) && isAnyArrayBuffer(val2)) {
+    if (!areEqualArrayBuffers(val1, val2)) {
+      return false;
+    }
+  }
+  return keyCheck(val1, val2, kLoose, memos, kNoIterator);
+}
+
+function isDeepStrictEqual(val1, val2) {
+  return innerDeepEqual(val1, val2, kStrict);
+};
+
+function inspectValue(val) {
+  // The util.inspect default values could be changed. This makes sure the
+  // error messages contain the necessary information nevertheless.
+  return inspect(
+    val,
+    {
+      compact: false,
+      customInspect: false,
+      depth: 1000,
+      maxArrayLength: Infinity,
+      // Assert compares only enumerable properties (with a few exceptions).
+      showHidden: false,
+      // Having a long line as error is better than wrapping the line for
+      // comparison.
+      breakLength: Infinity,
+      // Assert does not detect proxies currently.
+      showProxy: false,
+      sorted: true
+    }
+  );
+}
+
 assert.AssertionError = function AssertionError(options) {
   this.name = 'AssertionError';
   this.actual = options.actual;
@@ -157,6 +488,7 @@ assert.AssertionError = function AssertionError(options) {
     }
   }
 };
+
 
 // assert.AssertionError instanceof Error
 util.inherits(assert.AssertionError, Error);
@@ -203,6 +535,7 @@ function fail(actual, expected, message, operator, stackStartFunction) {
   });
 }
 
+
 // EXTENSION! allows for well behaved errors defined elsewhere.
 assert.fail = fail;
 
@@ -213,9 +546,11 @@ assert.fail = fail;
 // message_opt);. To test strictly for the value true, use
 // assert.strictEqual(true, guard, message_opt);.
 
+
 function ok(value, message) {
   if (!value) fail(value, true, message, '==', assert.ok);
 }
+
 assert.ok = ok;
 
 // 5. The equality assertion tests shallow, coercive equality with
@@ -223,13 +558,17 @@ assert.ok = ok;
 // assert.equal(actual, expected, message_opt);
 
 assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
+  // eslint-disable-next-line eqeqeq
+  if (actual != expected) {
+    fail(actual, expected, message, '==', assert.equal)
+  }
 };
 
 // 6. The non-equality assertion tests for whether two objects are not equal
 // with != assert.notEqual(actual, expected, message_opt);
 
 assert.notEqual = function notEqual(actual, expected, message) {
+  // eslint-disable-next-line eqeqeq
   if (actual == expected) {
     fail(actual, expected, message, '!=', assert.notEqual);
   }
@@ -239,13 +578,13 @@ assert.notEqual = function notEqual(actual, expected, message) {
 // assert.deepEqual(actual, expected, message_opt);
 
 assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, false)) {
+  if (!_deepEqual(actual, expected)) {
     fail(actual, expected, message, 'deepEqual', assert.deepEqual);
   }
 };
 
 assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, true)) {
+  if (!isDeepStrictEqual(actual, expected)) {
     fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
   }
 };
@@ -366,24 +705,23 @@ function objEquiv(a, b, strict, actualVisitedObjects) {
 // assert.notDeepEqual(actual, expected, message_opt);
 
 assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, false)) {
+  if (isDeepEqual(actual, expected)) {
     fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
   }
 };
 
-assert.notDeepStrictEqual = notDeepStrictEqual;
 function notDeepStrictEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, true)) {
+  if (isDeepStrictEqual(actual, expected)) {
     fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
   }
 }
-
+assert.notDeepStrictEqual = notDeepStrictEqual;
 
 // 9. The strict equality assertion tests strict equality, as determined by ===.
 // assert.strictEqual(actual, expected, message_opt);
 
 assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
+  if (!Object.is(actual, expected)) {
     fail(actual, expected, message, '===', assert.strictEqual);
   }
 };
@@ -392,7 +730,7 @@ assert.strictEqual = function strictEqual(actual, expected, message) {
 // determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
 
 assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
+  if (Object.is(actual, expected)) {
     fail(actual, expected, message, '!==', assert.notStrictEqual);
   }
 };
