@@ -70,8 +70,9 @@ function isBuffer(b) {
 
 var util = require('util/');
 
-var ONLY_ENUMERABLE = 2;
 //Variables/functions use in comparison functions
+
+var ONLY_ENUMERABLE = 2;
 const kStrict = true;
 const kLoose = false;
 const kNoIterator = 0;
@@ -82,6 +83,7 @@ const objectIs = Object.is;
 const ReflectApply = Reflect.apply;
 const getPrototypeOf = Object.getPrototypeOf;
 const objectToString = uncurryThis(Object.prototype.toString);
+
 function uncurryThis(func) {
   return (thisArg, ...args) => ReflectApply(func, thisArg, args);
 }
@@ -117,6 +119,7 @@ var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
     }
     return descriptors;
   };
+
 //Variable for use in AssertionError
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
@@ -431,27 +434,6 @@ function isDeepStrictEqual(val1, val2) {
   return innerDeepEqual(val1, val2, kStrict);
 };
 
-function inspectValue(val) {
-  // The util.inspect default values could be changed. This makes sure the
-  // error messages contain the necessary information nevertheless.
-  return inspect(
-    val,
-    {
-      compact: false,
-      customInspect: false,
-      depth: 1000,
-      maxArrayLength: Infinity,
-      // Assert compares only enumerable properties (with a few exceptions).
-      showHidden: false,
-      // Having a long line as error is better than wrapping the line for
-      // comparison.
-      breakLength: Infinity,
-      // Assert does not detect proxies currently.
-      showProxy: false,
-      sorted: true
-    }
-  );
-}
 
 assert.AssertionError = function AssertionError(options) {
   this.name = 'AssertionError';
@@ -725,6 +707,7 @@ assert.strictEqual = function strictEqual(actual, expected, message) {
     fail(actual, expected, message, '===', assert.strictEqual);
   }
 };
+
 
 // 10. The strict non-equality assertion tests for strict inequality, as
 // determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
