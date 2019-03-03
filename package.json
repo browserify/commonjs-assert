@@ -20,6 +20,10 @@
     "zuul": "~3.10.0",
     "zuul-ngrok": "^4.0.0"
   },
+  "author": {
+    "name": "Joyent",
+    "url": "http://www.joyent.com"
+  },
   "license": "MIT",
   "scripts": {
     "test-node": "mocha --ui qunit test.js",
