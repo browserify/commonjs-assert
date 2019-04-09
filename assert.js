@@ -1,5 +1,7 @@
 'use strict';
 
+var objectAssign = require('object-assign');
+
 // compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
 // original notice:
 
@@ -487,7 +489,7 @@ assert.ifError = function(err) { if (err) throw err; };
 function strict(value, message) {
   if (!value) fail(value, true, message, '==', strict);
 }
-assert.strict = Object.assign(strict, assert, {
+assert.strict = objectAssign(strict, assert, {
   equal: assert.strictEqual,
   deepEqual: assert.deepStrictEqual,
   notEqual: assert.notStrictEqual,
