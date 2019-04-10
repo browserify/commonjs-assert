@@ -1,13 +1,15 @@
-ui: mocha-qunit
-tunnel: ngrok
+sauce_connect: true
+loopback: airtap.local
 browsers:
   - name: chrome
     version: latest
   - name: firefox
     version: latest
   - name: safari
+    version: 9..latest
+  - name: iphone
     version: latest
   - name: ie
     version: 9..latest
   - name: microsoftedge
-    version: latest
+version: 13..latest
