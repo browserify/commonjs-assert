@@ -21,7 +21,7 @@ matrix:
     env: TASK=test-node
   - node_js: 5
     env: TASK=test-node
-  - node_js: '0.10'
+  - node_js: 'stable'
     env: TASK=test-browser
 script: "npm run $TASK"
 env:
