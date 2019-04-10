@@ -12,4 +12,4 @@ browsers:
   - name: ie
     version: 9..latest
   - name: microsoftedge
-version: 13..latest
+    version: 13..latest
