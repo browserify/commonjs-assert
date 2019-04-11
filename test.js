@@ -342,4 +342,19 @@ function tests (assert, what) {
         assert.equal(e.toString().split('\n')[0], 'AssertionError: oh no');
       }
     });
+
+    test('assert - strict mode', function () {
+      var assertStrict = assert.strict;
+
+      assertStrict.throws(makeBlock(assertStrict.equal, 1, true), assertStrict.AssertionError);
+      assertStrict.notEqual(0, false);
+      assertStrict.throws(makeBlock(assertStrict.deepEqual, 1, true), assertStrict.AssertionError);
+      assertStrict.notDeepEqual(0, false);
+      assertStrict.equal(assertStrict.strict, assertStrict.strict.strict);
+      assertStrict.equal(assertStrict.equal, assertStrict.strictEqual);
+      assertStrict.equal(assertStrict.deepEqual, assertStrict.deepStrictEqual);
+      assertStrict.equal(assertStrict.notEqual, assertStrict.notStrictEqual);
+      assertStrict.equal(assertStrict.notDeepEqual, assertStrict.notDeepStrictEqual);
+      assertStrict.equal(Object.keys(assertStrict).length, Object.keys(assert).length);
+    });
 }
