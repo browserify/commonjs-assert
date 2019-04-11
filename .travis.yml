@@ -1,6 +1,8 @@
 language: node_js
 before_install:
-  - nvm install-latest-npm
+  # Old npm certs are untrusted https://github.com/npm/npm/issues/20191
+  - 'if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then export NPM_CONFIG_STRICT_SSL=false; fi'
+  - 'nvm install-latest-npm'
 matrix:
   include:
   - node_js: '0.8'
