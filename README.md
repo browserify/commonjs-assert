@@ -8,7 +8,7 @@
 
 With browserify, simply `require('assert')` or use the `assert` global and you will get this module.
 
-The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs]((https://nodejs.org/api/assert.html) for API documentation.
+The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs](https://nodejs.org/api/assert.html) for API documentation.
 
 ## Install
 
@@ -20,7 +20,7 @@ npm install buffer
 
 ## Usage
 
-The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs]((https://nodejs.org/api/assert.html) for API documentation.
+The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs](https://nodejs.org/api/assert.html) for API documentation.
 
 ### Inconsistencies with Node.js `assert`
 
