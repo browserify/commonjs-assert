@@ -6,8 +6,15 @@
   "license": "MIT",
   "homepage": "https://github.com/browserify/commonjs-assert",
   "repository": "browserify/commonjs-assert",
+  "scripts": {
+    "test": "node test.js"
+  },
   "keywords": [
     "assert",
     "browser"
-  ]
+  ],
+  "devDependencies": {
+    "glob": "^7.1.3",
+    "tape": "^4.10.1"
+  }
 }
