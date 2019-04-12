@@ -683,8 +683,11 @@ function getBufferSources(buf) {
   return [...getArrayBufferViews(buf), new Uint8Array(buf).buffer];
 }
 
+// [browserify] We never want to crash the whole test process.
+//
 // Crash the process on unhandled rejections.
-const crashOnUnhandledRejection = (err) => { throw err; };
+// const crashOnUnhandledRejection = (err) => { throw err; };
+const crashOnUnhandledRejection = noop;
 process.on('unhandledRejection', crashOnUnhandledRejection);
 function disableCrashOnUnhandledRejection() {
   process.removeListener('unhandledRejection', crashOnUnhandledRejection);
