@@ -526,7 +526,10 @@ let catchWarning;
 function expectWarning(nameOrMap, expected, code) {
   if (catchWarning === undefined) {
     catchWarning = {};
-    process.on('warning', (warning) => catchWarning[warning.name](warning));
+    // [browserify] Don't bother actually catching warnings for now as it breaks
+    // the tests when catchWarning[warning.name] is undefined for
+    // ExperimentalWarning: queueMicrotask() is experimental.
+    // process.on('warning', (warning) => catchWarning[warning.name](warning));
   }
   if (typeof nameOrMap === 'string') {
     catchWarning[nameOrMap] = _expectWarning(nameOrMap, expected, code);
