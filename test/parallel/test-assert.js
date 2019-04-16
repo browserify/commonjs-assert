@@ -28,7 +28,8 @@
 const common = require('../common');
 const assert = require('assert');
 const { inspect } = require('util');
-const { internalBinding } = require('internal/test/binding');
+// [browserify]
+// const { internalBinding } = require('internal/test/binding');
 const a = assert;
 
 // Disable colored output to prevent color codes from breaking assertion
@@ -656,36 +657,38 @@ common.expectsError(
   }
 );
 
-{
-  // Test caching.
-  const fs = internalBinding('fs');
-  const tmp = fs.close;
-  fs.close = common.mustCall(tmp, 1);
-  function throwErr() {
-    assert(
-      (Buffer.from('test') instanceof Error)
-    );
-  }
-  common.expectsError(
-    () => throwErr(),
-    {
-      code: 'ERR_ASSERTION',
-      type: assert.AssertionError,
-      message: 'The expression evaluated to a falsy value:\n\n  ' +
-               "assert(\n    (Buffer.from('test') instanceof Error)\n  )\n"
-    }
-  );
-  common.expectsError(
-    () => throwErr(),
-    {
-      code: 'ERR_ASSERTION',
-      type: assert.AssertionError,
-      message: 'The expression evaluated to a falsy value:\n\n  ' +
-               "assert(\n    (Buffer.from('test') instanceof Error)\n  )\n"
-    }
-  );
-  fs.close = tmp;
-}
+// [browserify]
+// This test uses internal Node.js functionality so we have to skip it.
+// {
+//   // Test caching.
+//   const fs = internalBinding('fs');
+//   const tmp = fs.close;
+//   fs.close = common.mustCall(tmp, 1);
+//   function throwErr() {
+//     assert(
+//       (Buffer.from('test') instanceof Error)
+//     );
+//   }
+//   common.expectsError(
+//     () => throwErr(),
+//     {
+//       code: 'ERR_ASSERTION',
+//       type: assert.AssertionError,
+//       message: 'The expression evaluated to a falsy value:\n\n  ' +
+//                "assert(\n    (Buffer.from('test') instanceof Error)\n  )\n"
+//     }
+//   );
+//   common.expectsError(
+//     () => throwErr(),
+//     {
+//       code: 'ERR_ASSERTION',
+//       type: assert.AssertionError,
+//       message: 'The expression evaluated to a falsy value:\n\n  ' +
+//                "assert(\n    (Buffer.from('test') instanceof Error)\n  )\n"
+//     }
+//   );
+//   fs.close = tmp;
+// }
 
 common.expectsError(
   () => {
