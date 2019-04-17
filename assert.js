@@ -31,7 +31,7 @@ const { codes: {
   ERR_INVALID_RETURN_VALUE,
   ERR_MISSING_ARGS
 } } = require('./internal/errors');
-const AssertionError = require('internal/assert/assertion_error');
+const AssertionError = require('./internal/assert/assertion_error');
 const { openSync, closeSync, readSync } = require('fs');
 const { inspect } = require('internal/util/inspect');
 const { isPromise, isRegExp } = require('internal/util/types');
