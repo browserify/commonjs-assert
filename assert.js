@@ -35,7 +35,7 @@ const AssertionError = require('./internal/assert/assertion_error');
 const { openSync, closeSync, readSync } = require('fs');
 const { inspect } = require('util');
 const { isPromise, isRegExp } = require('./internal/util/types');
-const { EOL } = require('internal/constants');
+const { EOL } = require('./internal/constants');
 const { NativeModule } = require('internal/bootstrap/loaders');
 
 const errorCache = new Map();
