@@ -36,7 +36,6 @@ const { openSync, closeSync, readSync } = require('fs');
 const { inspect } = require('util');
 const { isPromise, isRegExp } = require('./internal/util/types');
 const { EOL } = require('./internal/constants');
-const { NativeModule } = require('internal/bootstrap/loaders');
 
 const errorCache = new Map();
 
@@ -267,11 +266,12 @@ function getErrMessage(message, fn) {
     return errorCache.get(identifier);
   }
 
-  // Skip Node.js modules!
-  if (filename.endsWith('.js') && NativeModule.exists(filename.slice(0, -3))) {
-    errorCache.set(identifier, undefined);
-    return;
-  }
+  // [browserify] Skip this
+  // // Skip Node.js modules!
+  // if (filename.endsWith('.js') && NativeModule.exists(filename.slice(0, -3))) {
+  //   errorCache.set(identifier, undefined);
+  //   return;
+  // }
 
   let fd;
   try {
