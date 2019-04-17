@@ -7,14 +7,17 @@
   "homepage": "https://github.com/browserify/commonjs-assert",
   "repository": "browserify/commonjs-assert",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "test-native": "cross-env TEST_NATIVE=true npm test"
   },
   "keywords": [
     "assert",
     "browser"
   ],
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "glob": "^7.1.3",
+    "proxyquire": "^2.1.0",
     "tape": "^4.10.1"
   }
 }
