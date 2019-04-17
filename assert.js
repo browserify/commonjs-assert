@@ -33,7 +33,7 @@ const { codes: {
 } } = require('./internal/errors');
 const AssertionError = require('./internal/assert/assertion_error');
 const { openSync, closeSync, readSync } = require('fs');
-const { inspect } = require('internal/util/inspect');
+const { inspect } = require('util');
 const { isPromise, isRegExp } = require('internal/util/types');
 const { EOL } = require('internal/constants');
 const { NativeModule } = require('internal/bootstrap/loaders');
