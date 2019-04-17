@@ -3,12 +3,10 @@
 
 'use strict';
 
-const { Math } = primordials;
-
-const { inspect } = require('internal/util/inspect');
+const { inspect } = require('util');
 const { codes: {
   ERR_INVALID_ARG_TYPE
-} } = require('internal/errors');
+} } = require('../errors');
 
 let blue = '';
 let green = '';
