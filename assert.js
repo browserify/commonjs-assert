@@ -46,7 +46,7 @@ let findNodeAround;
 let decoder;
 
 function lazyLoadComparison() {
-  const comparison = require('internal/util/comparisons');
+  const comparison = require('./internal/util/comparisons');
   isDeepEqual = comparison.isDeepEqual;
   isDeepStrictEqual = comparison.isDeepStrictEqual;
 }
