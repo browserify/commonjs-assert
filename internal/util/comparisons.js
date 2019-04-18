@@ -90,23 +90,23 @@ function areEqualArrayBuffers(buf1, buf2) {
 function isEqualBoxedPrimitive(val1, val2) {
   if (isNumberObject(val1)) {
     return isNumberObject(val2) &&
-           Object.is(val1.valueOf(),
-                     val2.valueOf());
+           Object.is(Number.prototype.valueOf.call(val1),
+                     Number.prototype.valueOf.call(val2));
   }
   if (isStringObject(val1)) {
     return isStringObject(val2) &&
-           val1.valueOf() === val2.valueOf();
+           String.prototype.valueOf.call(val1) === String.prototype.valueOf.call(val2);
   }
   if (isBooleanObject(val1)) {
     return isBooleanObject(val2) &&
-           val1.valueOf() === val2.valueOf();
+           Boolean.prototype.valueOf.call(val1) === Boolean.prototype.valueOf.call(val2);
   }
   if (isBigIntObject(val1)) {
     return isBigIntObject(val2) &&
-           val1.valueOf() === val2.valueOf();
+           BigInt.prototype.valueOf.call(val1) === BigInt.prototype.valueOf.call(val2);
   }
   return isSymbolObject(val2) &&
-         val1.valueOf() === val2.valueOf();
+         Symbol.prototype.valueOf.call(val1) === Symbol.prototype.valueOf.call(val2);
 }
 
 // Notes: Type tags are historical [[Class]] properties that can be set by
@@ -182,7 +182,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
     return keyCheck(val1, val2, strict, memos, kNoIterator);
   }
   if (isDate(val1)) {
-    if (!isDate(val2) || val1.getTime() !== val2.getTime()) {
+    if (!isDate(val2) || Date.prototype.getTime.call(val1) !== Date.prototype.getTime.call(val2)) {
       return false;
     }
   } else if (isRegExp(val1)) {
