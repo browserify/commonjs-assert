@@ -3,23 +3,11 @@
 
 'use strict';
 
-const {
-  BigIntPrototype,
-  BooleanPrototype,
-  DatePrototype,
-  Number,
-  NumberPrototype,
-  Object,
-  ObjectPrototype: {
-    hasOwnProperty,
-    propertyIsEnumerable,
-    toString: objectToString
-  },
-  StringPrototype,
-  SymbolPrototype
-} = primordials;
+const hasOwnProperty = Object.hasOwnProperty.bind(Object);
+const propertyIsEnumerable = Object.propertyIsEnumerable.bind(Object);
+const objectToString = Object.toString.bind(Object);
 
-const { compare } = internalBinding('buffer');
+const { compare } = require('buffer').Buffer;
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
@@ -36,13 +24,30 @@ const {
   isSymbolObject,
   isFloat32Array,
   isFloat64Array
-} = require('internal/util/types');
-const {
-  getOwnNonIndexProperties,
-  propertyFilter: {
-    ONLY_ENUMERABLE
+} = require('util').types;
+
+function isNonIndex(key) {
+  if (key.length === 0 || key.length > 10)
+    return true;
+  for (var i = 0; i < key.length; i++) {
+    const code = key.charCodeAt(i);
+    if (code < 48 || code > 57)
+      return true;
   }
-} = internalBinding('util');
+  // The maximum size for an array is 2 ** 32 -1.
+  return key.length === 10 && key >= 2 ** 32;
+}
+
+function getOwnNonIndexProperties(value) {
+  return Object.keys(value)
+    .filter(isNonIndex)
+    .concat(
+      Object.getOwnPropertySymbols(value)
+        .filter(Object.prototype.propertyIsEnumerable.bind(value))
+    );
+}
+
+const ONLY_ENUMERABLE = undefined;
 
 const kStrict = true;
 const kLoose = false;
@@ -85,23 +90,23 @@ function areEqualArrayBuffers(buf1, buf2) {
 function isEqualBoxedPrimitive(val1, val2) {
   if (isNumberObject(val1)) {
     return isNumberObject(val2) &&
-           Object.is(NumberPrototype.valueOf(val1),
-                     NumberPrototype.valueOf(val2));
+           Object.is(val1.valueOf(),
+                     val2.valueOf());
   }
   if (isStringObject(val1)) {
     return isStringObject(val2) &&
-           StringPrototype.valueOf(val1) === StringPrototype.valueOf(val2);
+           val1.valueOf() === val2.valueOf();
   }
   if (isBooleanObject(val1)) {
     return isBooleanObject(val2) &&
-           BooleanPrototype.valueOf(val1) === BooleanPrototype.valueOf(val2);
+           val1.valueOf() === val2.valueOf();
   }
   if (isBigIntObject(val1)) {
     return isBigIntObject(val2) &&
-           BigIntPrototype.valueOf(val1) === BigIntPrototype.valueOf(val2);
+           val1.valueOf() === val2.valueOf();
   }
   return isSymbolObject(val2) &&
-         SymbolPrototype.valueOf(val1) === SymbolPrototype.valueOf(val2);
+         val1.valueOf() === val2.valueOf();
 }
 
 // Notes: Type tags are historical [[Class]] properties that can be set by
@@ -177,7 +182,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
     return keyCheck(val1, val2, strict, memos, kNoIterator);
   }
   if (isDate(val1)) {
-    if (DatePrototype.getTime(val1) !== DatePrototype.getTime(val2)) {
+    if (!isDate(val2) || val1.getTime() !== val2.getTime()) {
       return false;
     }
   } else if (isRegExp(val1)) {
