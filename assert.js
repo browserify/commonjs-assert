@@ -23,7 +23,7 @@
 
 'use strict';
 
-const { Buffer } = require('buffer');
+const { Buffer } = require('buffer/');
 const { codes: {
   ERR_AMBIGUOUS_ARGUMENT,
   ERR_INVALID_ARG_TYPE,

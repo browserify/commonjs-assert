@@ -18,7 +18,7 @@ const kInfo = Symbol('info');
 const messages = new Map();
 const codes = {};
 
-const { kMaxLength } = require('buffer');
+const { kMaxLength } = require('buffer/');
 const { defineProperty } = Object;
 
 let excludedStackFn;

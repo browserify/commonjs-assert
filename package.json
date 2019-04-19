@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "acorn": "^6.1.1",
-    "acorn-walk": "^6.1.1"
+    "acorn-walk": "^6.1.1",
+    "buffer": "^5.2.1"
   }
 }

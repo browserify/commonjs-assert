@@ -11,7 +11,7 @@ const hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
 const propertyIsEnumerable = uncurryThis(Object.prototype.propertyIsEnumerable);
 const objectToString = uncurryThis(Object.prototype.toString);
 
-const { compare } = require('buffer').Buffer;
+const { compare } = require('buffer/').Buffer;
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
