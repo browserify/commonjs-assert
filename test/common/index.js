@@ -27,7 +27,7 @@
 const process = global.process;  // Some tests tamper with the process global.
 const path = require('path');
 const fs = require('fs');
-const assert = require('assert');
+const assert = require('../assert-loader');
 const os = require('os');
 const { exec, execSync, spawnSync } = require('child_process');
 const util = require('util');

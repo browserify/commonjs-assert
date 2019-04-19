@@ -7,7 +7,7 @@
 // builtin modules.
 
 require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 const EventEmitter = require('events');
 const e = new EventEmitter();
 e.on('hello', assert);

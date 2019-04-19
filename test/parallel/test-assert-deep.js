@@ -4,7 +4,7 @@
 'use strict';
 
 require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 const util = require('util');
 const { AssertionError } = assert;
 const defaultMsgStart = 'Expected values to be strictly deep-equal:\n';

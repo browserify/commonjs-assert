@@ -1,2 +1,2 @@
-'use strict'; const ässört = require('assert'); ässört(true); ässört.ok(''); ässört(null);
+'use strict'; const ässört = require('../assert-loader'); ässört(true); ässört.ok(''); ässört(null);
 // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(false);

@@ -6,7 +6,7 @@
 // Verify that asserting in the very first line produces the expected result.
 
 require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 const { path } = require('../common/fixtures');
 
 assert.throws(

@@ -26,7 +26,7 @@
 'use strict';
 
 const common = require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 const { inspect } = require('util');
 // [browserify]
 // const { internalBinding } = require('internal/test/binding');
@@ -428,8 +428,8 @@ assert.throws(
 
 // Test strict assert.
 {
-  const a = require('assert');
-  const assert = require('assert').strict;
+  const a = require('../assert-loader');
+  const assert = require('../assert-loader').strict;
   /* eslint-disable no-restricted-properties */
   assert.throws(() => assert.equal(1, true), assert.AssertionError);
   assert.notEqual(0, false);

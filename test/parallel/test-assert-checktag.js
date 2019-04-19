@@ -3,7 +3,7 @@
 
 'use strict';
 require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 
 // Disable colored output to prevent color codes from breaking assertion
 // message comparisons. This should only be an issue when process.stdout

@@ -4,7 +4,7 @@
 'use strict';
 
 require('../common');
-const assert = require('assert');
+const assert = require('../assert-loader');
 
 // No args
 assert.throws(
