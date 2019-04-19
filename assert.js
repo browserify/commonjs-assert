@@ -203,8 +203,8 @@ function getCode(fd, line, column) {
 function parseCode(code, offset) {
   // Lazy load acorn.
   if (parseExpressionAt === undefined) {
-    ({ parseExpressionAt } = require('internal/deps/acorn/acorn/dist/acorn'));
-    ({ findNodeAround } = require('internal/deps/acorn/acorn-walk/dist/walk'));
+    ({ parseExpressionAt } = require('acorn'));
+    ({ findNodeAround } = require('acorn-walk'));
   }
   let node;
   let start = 0;
