@@ -23,7 +23,6 @@
 
 'use strict';
 
-const { Buffer } = require('buffer/');
 const { codes: {
   ERR_AMBIGUOUS_ARGUMENT,
   ERR_INVALID_ARG_TYPE,
@@ -32,10 +31,8 @@ const { codes: {
   ERR_MISSING_ARGS
 } } = require('./internal/errors');
 const AssertionError = require('./internal/assert/assertion_error');
-const { openSync, closeSync, readSync } = require('fs');
 const { inspect } = require('util/');
 const { isPromise, isRegExp } = require('util').types;
-const { EOL } = require('./internal/constants');
 
 const errorCache = new Map();
 
@@ -136,191 +133,6 @@ assert.fail = fail;
 // The AssertionError is defined in internal/error.
 assert.AssertionError = AssertionError;
 
-function findColumn(fd, column, code) {
-  if (code.length > column + 100) {
-    try {
-      return parseCode(code, column);
-    } catch {
-      // End recursion in case no code could be parsed. The expression should
-      // have been found after 2500 characters, so stop trying.
-      if (code.length - column > 2500) {
-        // eslint-disable-next-line no-throw-literal
-        throw null;
-      }
-    }
-  }
-  // Read up to 2500 bytes more than necessary in columns. That way we address
-  // multi byte characters and read enough data to parse the code.
-  const bytesToRead = column - code.length + 2500;
-  const buffer = Buffer.allocUnsafe(bytesToRead);
-  const bytesRead = readSync(fd, buffer, 0, bytesToRead);
-  code += decoder.write(buffer.slice(0, bytesRead));
-  // EOF: fast path.
-  if (bytesRead < bytesToRead) {
-    return parseCode(code, column);
-  }
-  // Read potentially missing code.
-  return findColumn(fd, column, code);
-}
-
-function getCode(fd, line, column) {
-  let bytesRead = 0;
-  if (line === 0) {
-    // Special handle line number one. This is more efficient and simplifies the
-    // rest of the algorithm. Read more than the regular column number in bytes
-    // to prevent multiple reads in case multi byte characters are used.
-    return findColumn(fd, column, '');
-  }
-  let lines = 0;
-  // Prevent blocking the event loop by limiting the maximum amount of
-  // data that may be read.
-  let maxReads = 64; // bytesPerRead * maxReads = 512 kb
-  const bytesPerRead = 8192;
-  // Use a single buffer up front that is reused until the call site is found.
-  let buffer = Buffer.allocUnsafe(bytesPerRead);
-  while (maxReads-- !== 0) {
-    // Only allocate a new buffer in case the needed line is found. All data
-    // before that can be discarded.
-    buffer = lines < line ? buffer : Buffer.allocUnsafe(bytesPerRead);
-    bytesRead = readSync(fd, buffer, 0, bytesPerRead);
-    // Read the buffer until the required code line is found.
-    for (var i = 0; i < bytesRead; i++) {
-      if (buffer[i] === 10 && ++lines === line) {
-        // If the end of file is reached, directly parse the code and return.
-        if (bytesRead < bytesPerRead) {
-          return parseCode(buffer.toString('utf8', i + 1, bytesRead), column);
-        }
-        // Check if the read code is sufficient or read more until the whole
-        // expression is read. Make sure multi byte characters are preserved
-        // properly by using the decoder.
-        const code = decoder.write(buffer.slice(i + 1, bytesRead));
-        return findColumn(fd, column, code);
-      }
-    }
-  }
-}
-
-function parseCode(code, offset) {
-  // Lazy load acorn.
-  if (parseExpressionAt === undefined) {
-    ({ parseExpressionAt } = require('acorn'));
-    ({ findNodeAround } = require('acorn-walk'));
-  }
-  let node;
-  let start = 0;
-  // Parse the read code until the correct expression is found.
-  do {
-    try {
-      node = parseExpressionAt(code, start);
-      start = node.end + 1 || start;
-      // Find the CallExpression in the tree.
-      node = findNodeAround(node, offset, 'CallExpression');
-    } catch (err) {
-      // Unexpected token error and the like.
-      start += err.raisedAt || 1;
-      if (start > offset) {
-        // No matching expression found. This could happen if the assert
-        // expression is bigger than the provided buffer.
-        // eslint-disable-next-line no-throw-literal
-        throw null;
-      }
-    }
-  } while (node === undefined || node.node.end < offset);
-
-  return [
-    node.node.start,
-    code.slice(node.node.start, node.node.end)
-        .replace(escapeSequencesRegExp, escapeFn)
-  ];
-}
-
-function getErrMessage(message, fn) {
-  const tmpLimit = Error.stackTraceLimit;
-  // Make sure the limit is set to 1. Otherwise it could fail (<= 0) or it
-  // does to much work.
-  Error.stackTraceLimit = 1;
-  // We only need the stack trace. To minimize the overhead use an object
-  // instead of an error.
-  const err = {};
-  // eslint-disable-next-line no-restricted-syntax
-  Error.captureStackTrace(err, fn);
-  Error.stackTraceLimit = tmpLimit;
-
-  const tmpPrepare = Error.prepareStackTrace;
-  Error.prepareStackTrace = (_, stack) => stack;
-  const call = err.stack[0];
-  Error.prepareStackTrace = tmpPrepare;
-
-  const filename = call.getFileName();
-
-  if (!filename) {
-    return message;
-  }
-
-  const line = call.getLineNumber() - 1;
-  let column = call.getColumnNumber() - 1;
-
-  const identifier = `${filename}${line}${column}`;
-
-  if (errorCache.has(identifier)) {
-    return errorCache.get(identifier);
-  }
-
-  // [browserify] Skip this
-  // // Skip Node.js modules!
-  // if (filename.endsWith('.js') && NativeModule.exists(filename.slice(0, -3))) {
-  //   errorCache.set(identifier, undefined);
-  //   return;
-  // }
-
-  let fd;
-  try {
-    // Set the stack trace limit to zero. This makes sure unexpected token
-    // errors are handled faster.
-    Error.stackTraceLimit = 0;
-
-    if (decoder === undefined) {
-      const { StringDecoder } = require('string_decoder');
-      decoder = new StringDecoder('utf8');
-    }
-
-    fd = openSync(filename, 'r', 0o666);
-    // Reset column and message.
-    [column, message] = getCode(fd, line, column);
-    // Flush unfinished multi byte characters.
-    decoder.end();
-    // Always normalize indentation, otherwise the message could look weird.
-    if (message.includes('\n')) {
-      if (EOL === '\r\n') {
-        message = message.replace(/\r\n/g, '\n');
-      }
-      const frames = message.split('\n');
-      message = frames.shift();
-      for (const frame of frames) {
-        let pos = 0;
-        while (pos < column && (frame[pos] === ' ' || frame[pos] === '\t')) {
-          pos++;
-        }
-        message += `\n  ${frame.slice(pos)}`;
-      }
-    }
-    message = `The expression evaluated to a falsy value:\n\n  ${message}\n`;
-    // Make sure to always set the cache! No matter if the message is
-    // undefined or not
-    errorCache.set(identifier, message);
-
-    return message;
-  } catch {
-    // Invalidate cache to prevent trying to read this part again.
-    errorCache.set(identifier, undefined);
-  } finally {
-    // Reset limit.
-    Error.stackTraceLimit = tmpLimit;
-    if (fd !== undefined)
-      closeSync(fd);
-  }
-}
-
 function innerOk(fn, argLen, value, message) {
   if (!value) {
     let generatedMessage = false;
@@ -328,9 +140,6 @@ function innerOk(fn, argLen, value, message) {
     if (argLen === 0) {
       generatedMessage = true;
       message = 'No value argument passed to `assert.ok()`';
-    // } else if (message == null) {
-    //   generatedMessage = true;
-    //   message = getErrMessage(message, fn);
     } else if (message instanceof Error) {
       throw message;
     }
