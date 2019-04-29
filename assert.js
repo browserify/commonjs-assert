@@ -328,9 +328,9 @@ function innerOk(fn, argLen, value, message) {
     if (argLen === 0) {
       generatedMessage = true;
       message = 'No value argument passed to `assert.ok()`';
-    } else if (message == null) {
-      generatedMessage = true;
-      message = getErrMessage(message, fn);
+    // } else if (message == null) {
+    //   generatedMessage = true;
+    //   message = getErrMessage(message, fn);
     } else if (message instanceof Error) {
       throw message;
     }

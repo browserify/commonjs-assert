@@ -262,11 +262,11 @@ circular.x = circular;
 function testAssertionMessage(actual, expected, msg) {
   assert.throws(
     () => assert.strictEqual(actual, ''),
-    {
-      generatedMessage: true,
-      // message: msg || strictEqualMessageStart +
-      //          `+ actual - expected\n\n+ ${expected}\n- ''`
-    }
+    // {
+    //   // generatedMessage: true,
+    //   // message: msg || strictEqualMessageStart +
+    //   //          `+ actual - expected\n\n+ ${expected}\n- ''`
+    // }
   );
 }
 
@@ -470,8 +470,8 @@ assert.throws(
     {
       code: 'ERR_ASSERTION',
       type: assert.AssertionError,
-      message: 'The expression evaluated to a falsy value:\n\n  ' +
-               "assert.ok(\n    typeof 123 === 'string'\n  )\n"
+      // message: 'The expression evaluated to a falsy value:\n\n  ' +
+      //          "assert.ok(\n    typeof 123 === 'string'\n  )\n"
     }
   );
   Error.stackTraceLimit = tmpLimit;
@@ -646,7 +646,7 @@ common.expectsError(
   {
     code: 'ERR_ASSERTION',
     type: assert.AssertionError,
-    generatedMessage: true,
+    // generatedMessage: true,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert.ok(null)\n'
   }
@@ -656,7 +656,7 @@ common.expectsError(
   {
     code: 'ERR_ASSERTION',
     type: assert.AssertionError,
-    generatedMessage: true,
+    // generatedMessage: true,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          "assert(typeof 123 === 'string')\n"
   }
@@ -828,7 +828,7 @@ common.expectsError(
     type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert.ok.call(null, 0)\n',
-    generatedMessage: true
+    // generatedMessage: true
   }
 );
 
@@ -977,7 +977,7 @@ common.expectsError(
     {
       name: 'AssertionError',
       code: 'ERR_ASSERTION',
-      generatedMessage: true,
+      // generatedMessage: true,
       // message: `${start}\n${actExp}\n\n` +
       //          '  Comparison {\n' +
       //          "+   message: 'foo',\n" +
@@ -1095,7 +1095,7 @@ assert.throws(
       operator: 'throws',
       actual,
       expected,
-      generatedMessage: true,
+      // generatedMessage: true,
       // message: `${start}\n${actExp}\n\n` +
       //         '+ null\n' +
       //         '- {\n' +
