@@ -30,7 +30,7 @@ const fs = require('fs');
 const assert = require('../assert-loader');
 const os = require('os');
 const { exec, execSync, spawnSync } = require('child_process');
-const util = require('util');
+const util = require('util/');
 const tmpdir = require('./tmpdir');
 const bits = ['arm64', 'mips', 'mipsel', 'ppc64', 's390x', 'x64']
   .includes(process.arch) ? 64 : 32;
@@ -592,10 +592,20 @@ function expectsError(fn, settings, exact) {
       innerSettings.message = error.message;
     }
 
+    const isDeepStrictEqual = (actual, expected) => {
+      const assert = require('../assert-loader');
+      try {
+        assert.deepStrictEqual(actual, expected);
+        return true;
+      } catch(e) {
+        return false;
+      }
+    };
+
     // Check all error properties.
     const keys = Object.keys(settings);
     for (const key of keys) {
-      if (!util.isDeepStrictEqual(error[key], innerSettings[key])) {
+      if (!isDeepStrictEqual(error[key], innerSettings[key])) {
         // Create placeholder objects to create a nice output.
         const a = new Comparison(error, keys);
         const b = new Comparison(innerSettings, keys);

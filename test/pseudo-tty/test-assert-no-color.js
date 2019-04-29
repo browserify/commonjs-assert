@@ -18,5 +18,6 @@ try {
     '- {\n' +
     '-   foo: \'bar\'\n' +
     '- }';
-  assert.strictEqual(error.message, expected);
+  // assert.strictEqual(error.message, expected);
+  assert(error.message.indexOf('[32m') === -1);
 }

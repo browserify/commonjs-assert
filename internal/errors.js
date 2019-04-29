@@ -129,7 +129,7 @@ function getMessage(key, args, self) {
     return msg;
 
   args.unshift(msg);
-  if (util === undefined) util = require('util');
+  if (util === undefined) util = require('util/');
   return util.format.apply(null, args);
 }
 
