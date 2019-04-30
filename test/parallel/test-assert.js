@@ -171,7 +171,7 @@ assert.throws(
       },
       Array
     );
-  } catch {
+  } catch(e) {
     threw = true;
   }
   assert.ok(threw, 'wrong constructor validation');

@@ -98,7 +98,7 @@ function canCreateSymLink() {
     try {
       const output = execSync(`${whoamiPath} /priv`, { timout: 1000 });
       return output.includes('SeCreateSymbolicLinkPrivilege');
-    } catch {
+    } catch(e) {
       return false;
     }
   }
