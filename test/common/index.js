@@ -1,5 +1,7 @@
 const assert = require('../assert-loader');
 
+const bigIntSupported = typeof BigInt !== 'undefined';
+
 const noop = () => {};
 
 const mustCallChecks = [];
@@ -265,6 +267,7 @@ function disableCrashOnUnhandledRejection() {
 }
 
 module.exports = {
+  bigIntSupported,
   mustNotCall,
   mustCall,
   expectWarning,

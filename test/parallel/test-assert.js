@@ -1202,10 +1202,12 @@ assert.throws(
   { code: 'ERR_MISSING_ARGS' }
 );
 
-assert.throws(
-  () => a.notStrictEqual(5n),
-  { code: 'ERR_MISSING_ARGS' }
-);
+if (common.bigIntSupported) {
+  assert.throws(
+    () => a.notStrictEqual(eval('5n')),
+    { code: 'ERR_MISSING_ARGS' }
+  );
+}
 
 assert.throws(
   () => a.notDeepStrictEqual(undefined),
