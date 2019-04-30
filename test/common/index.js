@@ -271,6 +271,12 @@ function expectsError(fn, settings, exact) {
   return mustCall(innerFn, exact);
 }
 
+const crashOnUnhandledRejection = (err) => { throw err; };
+process.on('unhandledRejection', crashOnUnhandledRejection);
+function disableCrashOnUnhandledRejection() {
+  process.removeListener('unhandledRejection', crashOnUnhandledRejection);
+}
+
 module.exports = {
   mustNotCall,
   mustCall,
