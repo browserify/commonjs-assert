@@ -25,5 +25,7 @@ try {
     '    2\n' +
     '  ]';
   // assert.strictEqual(err.message, expected);
-  assert(err.message.indexOf('[32m') > -1);
+  if(process.stderr.getColorDepth) {
+    assert(err.message.indexOf('[32m') > -1);
+  }
 }
