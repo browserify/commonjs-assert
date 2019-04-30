@@ -220,4 +220,4 @@ promises.push(assert.rejects(
 }
 
 // Make sure all async code gets properly executed.
-Promise.all(promises).then(common.mustCall());
+module.exports = Promise.all(promises).then(common.mustCall());

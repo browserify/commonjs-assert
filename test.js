@@ -6,9 +6,14 @@ const testPaths = glob.sync('test/**/test-assert*.js');
 
 testPaths.forEach(testPath => {
   test(testPath, t => {
+    t.plan(2)
+    let result;
     t.doesNotThrow(() => {
-      require(path.resolve(__dirname, testPath));
+      result = require(path.resolve(__dirname, testPath));
     });
-    t.end();
+    Promise.resolve(result)
+      .then(() => false)
+      .catch(error => error)
+      .then(resolved => t.error(resolved, 'should not resolve to rejected Promise'));
   });
 });
