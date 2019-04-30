@@ -129,7 +129,7 @@ function getMessage(key, args, self) {
     return msg;
 
   args.unshift(msg);
-  if (util === undefined) util = require('util/');
+  if (util === undefined) util = require('@lukechilds/util');
   return util.format.apply(null, args);
 }
 
@@ -203,7 +203,7 @@ E('ERR_INVALID_ARG_TYPE',
     return msg;
   }, TypeError);
 E('ERR_INVALID_ARG_VALUE', (name, value, reason = 'is invalid') => {
-  if (util === undefined) util = require('util');
+  if (util === undefined) util = require('@lukechilds/util');
   let inspected = util.inspect(value);
   if (inspected.length > 128) {
     inspected = `${inspected.slice(0, 128)}...`;

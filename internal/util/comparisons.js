@@ -28,7 +28,7 @@ const {
   isSymbolObject,
   isFloat32Array,
   isFloat64Array
-} = require('util').types;
+} = require('@lukechilds/util').types;
 
 function isNonIndex(key) {
   if (key.length === 0 || key.length > 10)

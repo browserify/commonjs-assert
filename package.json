@@ -20,7 +20,7 @@
     "tape": "^4.10.1"
   },
   "dependencies": {
-    "buffer": "^5.2.1",
-    "util": "^0.11.1"
+    "@lukechilds/util": "^0.12.0",
+    "buffer": "^5.2.1"
   }
 }

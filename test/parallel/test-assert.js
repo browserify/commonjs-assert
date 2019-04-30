@@ -27,7 +27,7 @@
 
 const common = require('../common');
 const assert = require('../assert-loader');
-const { inspect } = require('util/');
+const { inspect } = require('@lukechilds/util');
 // [browserify]
 // const { internalBinding } = require('internal/test/binding');
 const a = assert;
