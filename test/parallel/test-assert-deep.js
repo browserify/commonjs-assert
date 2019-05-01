@@ -13,7 +13,7 @@ const defaultMsgStartFull = `${defaultMsgStart}+ actual - expected`;
 // Disable colored output to prevent color codes from breaking assertion
 // message comparisons. This should only be an issue when process.stdout
 // is a TTY.
-if (process.stdout.isTTY)
+if (process.stdout && process.stdout.isTTY)
   process.env.NODE_DISABLE_COLORS = '1';
 
 // Template tag function turning an error message into a RegExp

@@ -8,7 +8,7 @@ const assert = require('../../assert');
 // Disable colored output to prevent color codes from breaking assertion
 // message comparisons. This should only be an issue when process.stdout
 // is a TTY.
-if (process.stdout.isTTY)
+if (process.stdout && process.stdout.isTTY)
   process.env.NODE_DISABLE_COLORS = '1';
 
 // Turn off no-restricted-properties because we are testing deepEqual!
