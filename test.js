@@ -1,15 +1,25 @@
 const test = require('tape');
-const glob = require('glob');
-const path = require('path');
 
-const testPaths = glob.sync('test/**/test-assert*.js');
+const testPaths = [
+  './test/parallel/test-assert-async.js',
+  './test/parallel/test-assert-checktag.js',
+  './test/parallel/test-assert-deep.js',
+  './test/parallel/test-assert-fail-deprecation.js',
+  './test/parallel/test-assert-fail.js',
+  './test/parallel/test-assert-if-error.js',
+  './test/parallel/test-assert-typedarray-deepequal.js',
+  './test/parallel/test-assert.js',
+  './test/pseudo-tty/test-assert-colors.js',
+  './test/pseudo-tty/test-assert-no-color.js',
+  './test/pseudo-tty/test-assert-position-indicator.js'
+];
 
 testPaths.forEach(testPath => {
   test(testPath, t => {
     t.plan(2)
     let result;
     t.doesNotThrow(() => {
-      result = require(path.resolve(__dirname, testPath));
+      result = require(testPath);
     });
     Promise.resolve(result)
       .then(() => false)
