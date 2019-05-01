@@ -2,7 +2,7 @@
 // https://github.com/nodejs/node/commit/7493db21b667ed746d39c9b54357eac4287232e3
 
 'use strict';
-require('../common');
+const {isBrowser} = require('../common');
 const assert = require('../../assert');
 
 // Disable colored output to prevent color codes from breaking assertion
@@ -42,7 +42,7 @@ if (process.stdout && process.stdout.isTTY)
   );
 }
 
-{  // At the moment global has its own type tag
+if (!isBrowser) {  // At the moment global has its own type tag
   const fakeGlobal = {};
   Object.setPrototypeOf(fakeGlobal, Object.getPrototypeOf(global));
   for (const prop of Object.keys(global)) {
@@ -54,7 +54,8 @@ if (process.stdout && process.stdout.isTTY)
                 assert.AssertionError);
 }
 
-{ // At the moment process has its own type tag
+
+if (!isBrowser) { // At the moment process has its own type tag
   const fakeProcess = {};
   Object.setPrototypeOf(fakeProcess, Object.getPrototypeOf(process));
   for (const prop of Object.keys(process)) {

@@ -1,5 +1,7 @@
 const assert = require('../../assert');
 
+const isBrowser = typeof window !== 'undefined';
+
 const bigIntSupported = typeof BigInt !== 'undefined';
 
 const noop = () => {};
@@ -225,6 +227,7 @@ const crashOnUnhandledRejection = (err) => { throw err; };
 process.on('unhandledRejection', crashOnUnhandledRejection);
 
 module.exports = {
+  isBrowser,
   bigIntSupported,
   mustNotCall,
   mustCall,
