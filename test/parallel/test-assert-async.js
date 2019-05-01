@@ -35,7 +35,7 @@ const invalidThenableFunc = () => {
 
 // Check `assert.rejects`.
 {
-  const rejectingFn = async () => assert.fail();
+  const rejectingFn = () => Promise.resolve().then(() => assert.fail());
   const errObj = {
     code: 'ERR_ASSERTION',
     name: 'AssertionError',
@@ -83,7 +83,7 @@ const invalidThenableFunc = () => {
     return true;
   };
 
-  let promise = assert.rejects(async () => {}, common.mustNotCall());
+  let promise = assert.rejects(() => Promise.resolve({}), common.mustNotCall());
   promises.push(assert.rejects(promise, common.mustCall(handler)));
 
   promise = assert.rejects(() => {}, common.mustNotCall());
@@ -128,7 +128,7 @@ promises.push(assert.rejects(
     code: 'ERR_INVALID_RETURN_VALUE',
     name: 'TypeError'
   }));
-  promises.push(assert.doesNotReject(async () => {}));
+  promises.push(assert.doesNotReject(() => Promise.resolve({})));
   promises.push(assert.doesNotReject(Promise.resolve()));
 
   // `assert.doesNotReject` should not accept thenables that
@@ -174,7 +174,7 @@ promises.push(assert.rejects(
     return true;
   };
 
-  const rejectingFn = async () => assert.fail();
+  const rejectingFn = () => Promise.resolve().then(() => assert.fail());
 
   let promise = assert.doesNotReject(rejectingFn, common.mustCall(handler1));
   promises.push(assert.rejects(promise, common.mustCall(handler2)));

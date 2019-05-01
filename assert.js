@@ -423,29 +423,27 @@ function checkIsPromise(obj) {
     typeof obj.catch === 'function';
 }
 
-async function waitForActual(promiseFn) {
-  let resultPromise;
-  if (typeof promiseFn === 'function') {
-    // Return a rejected promise if `promiseFn` throws synchronously.
-    resultPromise = promiseFn();
-    // Fail in case no promise is returned.
-    if (!checkIsPromise(resultPromise)) {
-      throw new ERR_INVALID_RETURN_VALUE('instance of Promise',
-                                         'promiseFn', resultPromise);
+function waitForActual(promiseFn) {
+  return Promise.resolve().then(() => {
+    let resultPromise;
+    if (typeof promiseFn === 'function') {
+      // Return a rejected promise if `promiseFn` throws synchronously.
+      resultPromise = promiseFn();
+      // Fail in case no promise is returned.
+      if (!checkIsPromise(resultPromise)) {
+        throw new ERR_INVALID_RETURN_VALUE('instance of Promise',
+        'promiseFn', resultPromise);
+      }
+    } else if (checkIsPromise(promiseFn)) {
+      resultPromise = promiseFn;
+    } else {
+      throw new ERR_INVALID_ARG_TYPE('promiseFn', ['Function', 'Promise'], promiseFn);
     }
-  } else if (checkIsPromise(promiseFn)) {
-    resultPromise = promiseFn;
-  } else {
-    throw new ERR_INVALID_ARG_TYPE(
-      'promiseFn', ['Function', 'Promise'], promiseFn);
-  }
 
-  try {
-    await resultPromise;
-  } catch (e) {
-    return e;
-  }
-  return NO_EXCEPTION_SENTINEL;
+    return Promise.resolve().then(() => resultPromise)
+      .then(() => NO_EXCEPTION_SENTINEL)
+      .catch(e => e);
+  });
 }
 
 function expectsError(stackStartFn, actual, error, message) {
@@ -527,16 +525,20 @@ assert.throws = function throws(promiseFn, ...args) {
   expectsError(throws, getActual(promiseFn), ...args);
 };
 
-assert.rejects = async function rejects(promiseFn, ...args) {
-  expectsError(rejects, await waitForActual(promiseFn), ...args);
+assert.rejects = function rejects(promiseFn, ...args) {
+  return waitForActual(promiseFn).then(result => {
+    return expectsError(rejects, result, ...args);
+  });
 };
 
 assert.doesNotThrow = function doesNotThrow(fn, ...args) {
   expectsNoError(doesNotThrow, getActual(fn), ...args);
 };
 
-assert.doesNotReject = async function doesNotReject(fn, ...args) {
-  expectsNoError(doesNotReject, await waitForActual(fn), ...args);
+assert.doesNotReject = function doesNotReject(fn, ...args) {
+  return waitForActual(fn).then(result => {
+    return expectsNoError(doesNotReject, result, ...args);
+  });
 };
 
 assert.ifError = function ifError(err) {
