@@ -3,7 +3,7 @@
 
 'use strict';
 require('../common');
-const assert = require('../assert-loader').strict;
+const assert = require('../../assert').strict;
 
 try {
   // Activate colors even if the tty does not support colors.

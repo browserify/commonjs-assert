@@ -8,7 +8,6 @@
   "repository": "browserify/commonjs-assert",
   "scripts": {
     "test": "node test.js",
-    "test:native": "cross-env TEST_NATIVE=true npm test",
     "test:browsers": "airtap test.js",
     "test:browsers:local": "npm run test:browsers -- --local"
   },

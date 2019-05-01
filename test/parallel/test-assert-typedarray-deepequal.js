@@ -4,7 +4,7 @@
 'use strict';
 
 require('../common');
-const assert = require('../assert-loader');
+const assert = require('../../assert');
 
 function makeBlock(f) {
   const args = Array.prototype.slice.call(arguments, 1);

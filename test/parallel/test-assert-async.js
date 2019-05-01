@@ -3,7 +3,7 @@
 
 'use strict';
 const common = require('../common');
-const assert = require('../assert-loader');
+const assert = require('../../assert');
 
 // Run all tests in parallel and check their outcome at the end.
 const promises = [];

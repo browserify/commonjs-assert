@@ -4,7 +4,7 @@
 'use strict';
 
 const common = require('../common');
-const assert = require('../assert-loader');
+const assert = require('../../assert');
 
 common.expectWarning(
   'DeprecationWarning',

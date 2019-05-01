@@ -1,4 +1,4 @@
-const assert = require('../assert-loader');
+const assert = require('../../assert');
 
 const bigIntSupported = typeof BigInt !== 'undefined';
 
@@ -176,7 +176,7 @@ function expectsError(fn, settings, exact) {
     }
 
     const isDeepStrictEqual = (actual, expected) => {
-      const assert = require('../assert-loader');
+      const assert = require('../../assert');
       try {
         assert.deepStrictEqual(actual, expected);
         return true;

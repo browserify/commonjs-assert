@@ -3,7 +3,7 @@
 
 'use strict';
 require('../common');
-const assert = require('../assert-loader').strict;
+const assert = require('../../assert').strict;
 
 process.env.NODE_DISABLE_COLORS = true;
 

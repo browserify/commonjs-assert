@@ -4,7 +4,7 @@
 'use strict';
 
 require('../common');
-const assert = require('../assert-loader').strict;
+const assert = require('../../assert').strict;
 /* eslint-disable no-restricted-properties */
 
 // Test that assert.ifError has the correct stack trace of both stacks.
