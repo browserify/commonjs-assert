@@ -415,8 +415,10 @@ class AssertionError extends Error {
     this.actual = actual;
     this.expected = expected;
     this.operator = operator;
-    // eslint-disable-next-line no-restricted-syntax
-    Error.captureStackTrace(this, stackStartFn);
+    if (Error.captureStackTrace) {
+      // eslint-disable-next-line no-restricted-syntax
+      Error.captureStackTrace(this, stackStartFn);
+    }
     // Create error message including the error code in the name.
     this.stack;
     // Reset the name.

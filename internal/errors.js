@@ -70,7 +70,7 @@ function makeNodeErrorWithCode(Base, key) {
 
 function addCodeToName(err, name, code) {
   // Set the stack
-  if (excludedStackFn !== undefined) {
+  if (excludedStackFn !== undefined && Error.captureStackTrace) {
     // eslint-disable-next-line no-restricted-syntax
     Error.captureStackTrace(err, excludedStackFn);
   }
