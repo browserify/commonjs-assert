@@ -201,6 +201,7 @@ promises.push(assert.rejects(
     assert.strictEqual(err.code, 'ERR_ASSERTION');
     assert.strictEqual(err.actual, actual);
     assert.strictEqual(err.operator, 'rejects');
+    // [browserify] Don't worry if the stack is less reliable
     // assert(/rejects/.test(err.stack));
     return true;
   };
