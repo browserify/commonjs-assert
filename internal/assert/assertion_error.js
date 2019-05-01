@@ -317,7 +317,11 @@ class AssertionError extends Error {
       if (process.stderr && process.stderr.isTTY) {
         // Reset on each call to make sure we handle dynamically set environment
         // variables correct.
-        if (process.stderr.getColorDepth && process.stderr.getColorDepth() !== 1) {
+        if (
+          process.stderr &&
+          process.stderr.getColorDepth &&
+          process.stderr.getColorDepth() !== 1
+        ) {
           blue = '\u001b[34m';
           green = '\u001b[32m';
           white = '\u001b[39m';
