@@ -6,6 +6,10 @@ require('../common');
 const assert = require('../../assert');
 
 process.env.NODE_DISABLE_COLORS = true;
+if (!process.stderr) {
+  process.stderr = {};
+}
+process.stderr.isTTY = true;
 process.stderr.columns = 20;
 
 // Confirm that there is no position indicator.
