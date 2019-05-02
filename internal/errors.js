@@ -107,7 +107,7 @@ function E(sym, val, def, ...otherClasses) {
 }
 
 function getMessage(key, args, self) {
-  if (assert === undefined) assert = require('../');
+  if (assert === undefined) assert = require('../assert');
   const msg = messages.get(key);
 
   if (typeof msg === 'function') {
@@ -134,7 +134,7 @@ function getMessage(key, args, self) {
 }
 
 function oneOf(expected, thing) {
-  if (assert === undefined) assert = require('../');
+  if (assert === undefined) assert = require('../assert');
   assert(typeof thing === 'string', '`thing` has to be of type string');
   if (Array.isArray(expected)) {
     const len = expected.length;
@@ -177,7 +177,7 @@ module.exports = {
 E('ERR_AMBIGUOUS_ARGUMENT', 'The "%s" argument is ambiguous. %s', TypeError);
 E('ERR_INVALID_ARG_TYPE',
   (name, expected, actual) => {
-    if (assert === undefined) assert = require('../');
+    if (assert === undefined) assert = require('../assert');
     assert(typeof name === 'string', "'name' must be a string");
 
     // determiner: 'must be' or 'must not be'
@@ -222,7 +222,7 @@ E('ERR_INVALID_RETURN_VALUE', (input, name, value) => {
 }, TypeError);
 E('ERR_MISSING_ARGS',
   (...args) => {
-    if (assert === undefined) assert = require('../');
+    if (assert === undefined) assert = require('../assert');
     assert(args.length > 0, 'At least one arg needs to be specified');
     let msg = 'The ';
     const len = args.length;
