@@ -596,7 +596,9 @@ assertNotDeepOrStrict(
   const err1 = new Error('foo1');
   assertNotDeepOrStrict(err1, new Error('foo2'), assert.AssertionError);
   assertNotDeepOrStrict(err1, new TypeError('foo1'), assert.AssertionError);
-  assertDeepAndStrictEqual(err1, new Error('foo1'));
+  // [browserify] Objects will not be strictly equal in some browsers due to
+  // different `line`/`column` properties
+  // assertDeepAndStrictEqual(err1, new Error('foo1'));
   assertNotDeepOrStrict(err1, {}, AssertionError);
 }
 
