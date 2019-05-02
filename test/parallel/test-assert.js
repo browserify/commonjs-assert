@@ -958,7 +958,9 @@ common.expectsError(
     }
   );
 
-  assert.throws(() => { throw new Error('e'); }, new Error('e'));
+  // [browserify] Error objects will not be strictly equal in some browsers due
+  // to different `line`/`column` properties.
+  // assert.throws(() => { throw new Error('e'); }, new Error('e'));
   assert.throws(
     () => assert.throws(() => { throw new TypeError('e'); }, new Error('e')),
     {
