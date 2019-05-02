@@ -68,11 +68,13 @@ const notEqualArrayPairs = [
 
 console.log('equalArrayPairs');
 equalArrayPairs.forEach((arrayPair) => {
+  let array0;
+  let array1;
   try {
     array0 = arrayPair[0]();
     array1 = arrayPair[1]();
   } catch(e) {
-    console.log('Skipping unsupported typed array:', arrayPair[0].toString());
+    console.log('Skipping unsupported typed array:', e.message);
     return;
   }
   // eslint-disable-next-line no-restricted-properties
@@ -82,11 +84,13 @@ equalArrayPairs.forEach((arrayPair) => {
 
 console.log('looseEqualArrayPairs');
 looseEqualArrayPairs.forEach((arrayPair) => {
+  let array0;
+  let array1;
   try {
     array0 = arrayPair[0]();
     array1 = arrayPair[1]();
   } catch(e) {
-    console.log('Skipping unsupported typed array:', arrayPair[0].toString());
+    console.log('Skipping unsupported typed array:', e.message);
     return;
   }
   // eslint-disable-next-line no-restricted-properties
@@ -99,11 +103,13 @@ looseEqualArrayPairs.forEach((arrayPair) => {
 
 console.log('notEqualArrayPairs');
 notEqualArrayPairs.forEach((arrayPair) => {
+  let array0;
+  let array1;
   try {
     array0 = arrayPair[0]();
     array1 = arrayPair[1]();
   } catch(e) {
-    console.log('Skipping unsupported typed array:', arrayPair[0].toString());
+    console.log('Skipping unsupported typed array:', e.message);
     return;
   }
   assert.throws(
