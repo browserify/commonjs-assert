@@ -2,13 +2,14 @@
   "name": "assert",
   "version": "2.0.0-prerelease",
   "description": "The assert module from Node.js, for the browser.",
-  "main": "./assert.js",
+  "main": "build/assert.js",
   "license": "MIT",
   "homepage": "https://github.com/browserify/commonjs-assert",
   "repository": "browserify/commonjs-assert",
   "scripts": {
-    "test": "node test.js",
-    "test:browsers": "airtap test.js",
+    "build": "babel assert.js test.js --out-dir build && babel internal --out-dir build/internal && babel test --out-dir build/test",
+    "test": "node build/test.js",
+    "test:browsers": "airtap build/test.js",
     "test:browsers:local": "npm run test:browsers -- --local"
   },
   "keywords": [
@@ -16,6 +17,9 @@
     "browser"
   ],
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "airtap": "^2.0.2",
     "cross-env": "^5.2.0",
     "tape": "^4.10.1"
