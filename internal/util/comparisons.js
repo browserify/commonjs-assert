@@ -3,6 +3,8 @@
 
 'use strict';
 
+const regexFlagsSupported = /a/g.flags !== undefined;
+
 function uncurryThis(f) {
   return f.call.bind(f);
 }
@@ -63,7 +65,9 @@ const kIsMap = 3;
 
 // Check if they have the same source and flags
 function areSimilarRegExps(a, b) {
-  return a.source === b.source && a.flags === b.flags;
+  return regexFlagsSupported
+    ? a.source === b.source && a.flags === b.flags
+    : RegExp.prototype.toString.call(a) === RegExp.prototype.toString.call(b);
 }
 
 function areSimilarFloatArrays(a, b) {
@@ -190,7 +194,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
       return false;
     }
   } else if (isRegExp(val1)) {
-    if (!areSimilarRegExps(val1, val2)) {
+    if (!(isRegExp(val2) && areSimilarRegExps(val1, val2))) {
       return false;
     }
   } else if (isNativeError(val1) || val1 instanceof Error) {
