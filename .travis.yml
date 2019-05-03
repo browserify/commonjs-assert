@@ -1,5 +1,10 @@
 language: node_js
-node_js: 'stable'
+node_js:
+  - 'stable'
+  - '12'
+  - '10'
+  - '8'
+  - '6'
 script: npm test
 notifications:
   email:
