@@ -8,8 +8,8 @@
   "repository": "browserify/commonjs-assert",
   "scripts": {
     "build": "babel assert.js test.js --out-dir build && babel internal --out-dir build/internal && babel test --out-dir build/test",
-    "pretest": "npm run build",
-    "test": "node build/test.js",
+    "test": "npm run build && npm run test:nobuild",
+    "test:nobuild": "node build/test.js",
     "test:browsers": "airtap build/test.js",
     "test:browsers:local": "npm run test:browsers -- --local"
   },
