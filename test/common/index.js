@@ -1,5 +1,9 @@
 const assert = require('../../assert');
 
+const getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors
+  ? Object.getOwnPropertyDescriptors
+  : require('object.getownpropertydescriptors');
+
 const isBrowser = typeof window !== 'undefined';
 
 const bigIntSupported = typeof BigInt !== 'undefined';
@@ -172,7 +176,7 @@ function expectsError(fn, settings, exact) {
         settings.message.test(error.message)) {
       // Make a copy so we are able to modify the settings.
       innerSettings = Object.create(
-        settings, Object.getOwnPropertyDescriptors(settings));
+        settings, getOwnPropertyDescriptors(settings));
       // Visualize the message as identical in case of other errors.
       innerSettings.message = error.message;
     }
@@ -227,6 +231,7 @@ const crashOnUnhandledRejection = (err) => { throw err; };
 process.on('unhandledRejection', crashOnUnhandledRejection);
 
 module.exports = {
+  getOwnPropertyDescriptors,
   isBrowser,
   bigIntSupported,
   mustNotCall,

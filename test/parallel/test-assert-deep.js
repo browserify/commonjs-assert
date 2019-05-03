@@ -1041,10 +1041,10 @@ assert.throws(
 {
   const source = new Error('abc');
   const err = Object.create(
-    Object.getPrototypeOf(source), Object.getOwnPropertyDescriptors(source));
+    Object.getPrototypeOf(source), common.getOwnPropertyDescriptors(source));
   Object.defineProperty(err, 'message', { value: 'foo' });
   const err2 = Object.create(
-    Object.getPrototypeOf(source), Object.getOwnPropertyDescriptors(source));
+    Object.getPrototypeOf(source), common.getOwnPropertyDescriptors(source));
   Object.defineProperty(err2, 'message', { value: 'bar' });
   err[Symbol.toStringTag] = 'Foo';
   err2[Symbol.toStringTag] = 'Foo';
