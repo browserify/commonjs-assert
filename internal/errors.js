@@ -13,133 +13,41 @@
 // value statically and permanently identifies the error. While the error
 // message may change, the code should not.
 
-const kCode = Symbol('code');
-const kInfo = Symbol('info');
-const messages = new Map();
 const codes = {};
 
-const { kMaxLength } = require('buffer/');
-const { defineProperty } = Object;
-
-let excludedStackFn;
-
-// Lazily loaded
-let util;
+// Lazy loaded
 let assert;
+let util;
 
-function makeNodeErrorWithCode(Base, key) {
-  return class NodeError extends Base {
-    constructor(...args) {
-      if (excludedStackFn === undefined) {
-        super();
-      } else {
-        const limit = Error.stackTraceLimit;
-        Error.stackTraceLimit = 0;
-        super();
-        // Reset the limit and setting the name property.
-        Error.stackTraceLimit = limit;
-      }
-      const message = getMessage(key, args, this);
-      Object.defineProperty(this, 'message', {
-        value: message,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      });
-      addCodeToName(this, super.name, key);
-    }
-
-    get code() {
-      return key;
-    }
-
-    set code(value) {
-      defineProperty(this, 'code', {
-        configurable: true,
-        enumerable: true,
-        value,
-        writable: true
-      });
-    }
-
-    toString() {
-      return `${this.name} [${key}]: ${this.message}`;
-    }
-  };
-}
-
-function addCodeToName(err, name, code) {
-  // Set the stack
-  if (excludedStackFn !== undefined && Error.captureStackTrace) {
-    // eslint-disable-next-line no-restricted-syntax
-    Error.captureStackTrace(err, excludedStackFn);
-  }
-  // Add the error code to the name to include it in the stack trace.
-  err.name = `${name} [${code}]`;
-  // Access the stack to generate the error message including the error code
-  // from the name.
-  err.stack;
-  // Reset the name to the actual name.
-  if (name === 'SystemError') {
-    defineProperty(err, 'name', {
-      value: name,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    });
-  } else {
-    delete err.name;
-  }
-}
-
-// Utility function for registering the error codes. Only used here. Exported
-// *only* to allow for testing.
-function E(sym, val, def, ...otherClasses) {
-  messages.set(sym, val);
-  def = makeNodeErrorWithCode(def, sym);
-
-  if (otherClasses.length !== 0) {
-    otherClasses.forEach((clazz) => {
-      def[clazz.name] = makeNodeErrorWithCode(clazz, sym);
-    });
-  }
-  codes[sym] = def;
-}
-
-function getMessage(key, args, self) {
-  if (assert === undefined) assert = require('../assert');
-  const msg = messages.get(key);
-
-  if (typeof msg === 'function') {
-    assert(
-      msg.length <= args.length, // Default options do not count.
-      `Code: ${key}; The provided arguments length (${args.length}) does not ` +
-        `match the required ones (${msg.length}).`
-    );
-    return msg.apply(self, args);
+function createErrorType(code, message, Base) {
+  if (!Base) {
+    Base = Error
   }
 
-  const expectedLength = (msg.match(/%[dfijoOs]/g) || []).length;
-  assert(
-    expectedLength === args.length,
-    `Code: ${key}; The provided arguments length (${args.length}) does not ` +
-      `match the required ones (${expectedLength}).`
-  );
-  if (args.length === 0)
-    return msg;
+  function getMessage (arg1, arg2, arg3) {
+    if (typeof message === 'string') {
+      return message
+    } else {
+      return message(arg1, arg2, arg3)
+    }
+  }
 
-  args.unshift(msg);
-  if (util === undefined) util = require('util/');
-  return util.format.apply(null, args);
+  class NodeError extends Base {
+    constructor (arg1, arg2, arg3) {
+      super(getMessage(arg1, arg2, arg3));
+    }
+  }
+
+  NodeError.prototype.name = Base.name;
+  NodeError.prototype.code = code;
+
+  codes[code] = NodeError;
 }
 
+// https://github.com/nodejs/node/blob/v10.8.0/lib/internal/errors.js
 function oneOf(expected, thing) {
-  if (assert === undefined) assert = require('../assert');
-  assert(typeof thing === 'string', '`thing` has to be of type string');
   if (Array.isArray(expected)) {
     const len = expected.length;
-    assert(len > 0,
-           'At least one expected value needs to be specified');
     expected = expected.map((i) => String(i));
     if (len > 2) {
       return `one of ${thing} ${expected.slice(0, len - 1).join(', ')}, or ` +
@@ -154,28 +62,34 @@ function oneOf(expected, thing) {
   }
 }
 
-module.exports = {
-  codes
-};
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+function startsWith(str, search, pos) {
+	return str.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+}
 
-// To declare an error message, use the E(sym, val, def) function above. The sym
-// must be an upper case string. The val can be either a function or a string.
-// The def must be an error class.
-// The return value of the function must be a string.
-// Examples:
-// E('EXAMPLE_KEY1', 'This is the error value', Error);
-// E('EXAMPLE_KEY2', (a, b) => return `${a} ${b}`, RangeError);
-//
-// Once an error code has been assigned, the code itself MUST NOT change and
-// any given error code must never be reused to identify a different error.
-//
-// Any error code added here should also be added to the documentation
-//
-// Note: Please try to keep these in alphabetical order
-//
-// Note: Node.js specific errors must begin with the prefix ERR_
-E('ERR_AMBIGUOUS_ARGUMENT', 'The "%s" argument is ambiguous. %s', TypeError);
-E('ERR_INVALID_ARG_TYPE',
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+function endsWith(str, search, this_len) {
+	if (this_len === undefined || this_len > str.length) {
+		this_len = str.length;
+	}
+	return str.substring(this_len - search.length, this_len) === search;
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+function includes(str, search, start) {
+  if (typeof start !== 'number') {
+    start = 0;
+  }
+
+  if (start + search.length > str.length) {
+    return false;
+  } else {
+    return str.indexOf(search, start) !== -1;
+  }
+}
+
+createErrorType('ERR_AMBIGUOUS_ARGUMENT', 'The "%s" argument is ambiguous. %s', TypeError);
+createErrorType('ERR_INVALID_ARG_TYPE',
   (name, expected, actual) => {
     if (assert === undefined) assert = require('../assert');
     assert(typeof name === 'string', "'name' must be a string");
@@ -202,7 +116,7 @@ E('ERR_INVALID_ARG_TYPE',
     msg += `. Received type ${typeof actual}`;
     return msg;
   }, TypeError);
-E('ERR_INVALID_ARG_VALUE', (name, value, reason = 'is invalid') => {
+createErrorType('ERR_INVALID_ARG_VALUE', (name, value, reason = 'is invalid') => {
   if (util === undefined) util = require('util/');
   let inspected = util.inspect(value);
   if (inspected.length > 128) {
@@ -210,7 +124,7 @@ E('ERR_INVALID_ARG_VALUE', (name, value, reason = 'is invalid') => {
   }
   return `The argument '${name}' ${reason}. Received ${inspected}`;
 }, TypeError, RangeError);
-E('ERR_INVALID_RETURN_VALUE', (input, name, value) => {
+createErrorType('ERR_INVALID_RETURN_VALUE', (input, name, value) => {
   let type;
   if (value && value.constructor && value.constructor.name) {
     type = `instance of ${value.constructor.name}`;
@@ -220,7 +134,7 @@ E('ERR_INVALID_RETURN_VALUE', (input, name, value) => {
   return `Expected ${input} to be returned from the "${name}"` +
          ` function but got ${type}.`;
 }, TypeError);
-E('ERR_MISSING_ARGS',
+createErrorType('ERR_MISSING_ARGS',
   (...args) => {
     if (assert === undefined) assert = require('../assert');
     assert(args.length > 0, 'At least one arg needs to be specified');
@@ -241,3 +155,5 @@ E('ERR_MISSING_ARGS',
     }
     return `${msg} must be specified`;
   }, TypeError);
+
+module.exports.codes = codes;
