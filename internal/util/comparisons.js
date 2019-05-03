@@ -190,7 +190,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
     return keyCheck(val1, val2, strict, memos, kNoIterator);
   }
   if (isDate(val1)) {
-    if (!(isDate(val2) && Date.prototype.getTime.call(val1) === Date.prototype.getTime.call(val2))) {
+    if (!isDate(val2) || Date.prototype.getTime.call(val1) !== Date.prototype.getTime.call(val2)) {
       return false;
     }
   } else if (isRegExp(val1)) {
