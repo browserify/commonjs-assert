@@ -39,9 +39,6 @@ function createErrorType(code, message, Base) {
     }
   }
 
-  NodeError.prototype.name = Base.name;
-  NodeError.prototype.code = code;
-
   codes[code] = NodeError;
 }
 
