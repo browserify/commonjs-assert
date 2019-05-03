@@ -7,6 +7,8 @@ const getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors
 const isBrowser = typeof window !== 'undefined';
 
 const bigIntSupported = typeof BigInt !== 'undefined';
+const symbolSupported = typeof Symbol !== 'undefined';
+const symbolToStringTagSupported = symbolSupported && typeof Symbol.toStringTag !== 'undefined';
 
 const noop = () => {};
 
@@ -234,6 +236,7 @@ module.exports = {
   getOwnPropertyDescriptors,
   isBrowser,
   bigIntSupported,
+  symbolToStringTagSupported,
   mustNotCall,
   mustCall,
   expectWarning,

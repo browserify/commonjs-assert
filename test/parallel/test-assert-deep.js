@@ -1012,7 +1012,7 @@ assert.throws(
 }
 
 // Verify that extra keys will be tested for when using fake arrays.
-{
+if (common.symbolToStringTagSupported) {
   const a = {
     0: 1,
     1: 1,
@@ -1029,7 +1029,7 @@ assert.throws(
 }
 
 // Verify that changed tags will still check for the error message.
-{
+if (common.symbolToStringTagSupported) {
   const err = new Error('foo');
   err[Symbol.toStringTag] = 'Foobar';
   const err2 = new Error('bar');
@@ -1038,7 +1038,7 @@ assert.throws(
 }
 
 // Check for non-native errors.
-{
+if (common.symbolToStringTagSupported) {
   const source = new Error('abc');
   const err = Object.create(
     Object.getPrototypeOf(source), common.getOwnPropertyDescriptors(source));
