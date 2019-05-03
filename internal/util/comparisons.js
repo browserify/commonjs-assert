@@ -194,7 +194,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
       return false;
     }
   } else if (isRegExp(val1)) {
-    if (!(isRegExp(val2) && areSimilarRegExps(val1, val2))) {
+    if (!isRegExp(val2) || !areSimilarRegExps(val1, val2)) {
       return false;
     }
   } else if (isNativeError(val1) || val1 instanceof Error) {
