@@ -6,6 +6,7 @@
 const common = require('../common');
 const assert = require('../../assert');
 const util = require('util/');
+const getDescriptors = require('object.getownpropertydescriptors');
 const { AssertionError } = assert;
 const defaultMsgStart = 'Expected values to be strictly deep-equal:\n';
 const defaultMsgStartFull = `${defaultMsgStart}+ actual - expected`;
@@ -1039,10 +1040,10 @@ assert.throws(
 {
   const source = new Error('abc');
   const err = Object.create(
-    Object.getPrototypeOf(source), Object.getOwnPropertyDescriptors(source));
+    Object.getPrototypeOf(source), getDescriptors(source));
   Object.defineProperty(err, 'message', { value: 'foo' });
   const err2 = Object.create(
-    Object.getPrototypeOf(source), Object.getOwnPropertyDescriptors(source));
+    Object.getPrototypeOf(source), getDescriptors(source));
   Object.defineProperty(err2, 'message', { value: 'bar' });
   err[Symbol.toStringTag] = 'Foo';
   err2[Symbol.toStringTag] = 'Foo';

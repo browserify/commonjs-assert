@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "buffer": "^5.2.1",
+    "object.getownpropertydescriptors": "^2.0.3",
     "util": "^0.12.0"
   }
 }

@@ -1,5 +1,7 @@
 const assert = require('../../assert');
 
+const getDescriptors = require('object.getownpropertydescriptors');
+
 const isBrowser = typeof window !== 'undefined';
 
 const bigIntSupported = typeof BigInt !== 'undefined';
@@ -172,7 +174,7 @@ function expectsError(fn, settings, exact) {
         settings.message.test(error.message)) {
       // Make a copy so we are able to modify the settings.
       innerSettings = Object.create(
-        settings, Object.getOwnPropertyDescriptors(settings));
+        settings, getDescriptors(settings));
       // Visualize the message as identical in case of other errors.
       innerSettings.message = error.message;
     }
