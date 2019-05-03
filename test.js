@@ -1,5 +1,11 @@
 const test = require('tape');
 
+// Conditionally load polyfills required for testing
+if (typeof Promise === 'undefined') {
+  console.log('Loading Promise polyfill');
+  require('core-js/features/promise');
+}
+
 const testPaths = [
   ['test-assert-async.js', () => require('./test/parallel/test-assert-async.js')],
   ['test-assert-checktag.js', () => require('./test/parallel/test-assert-checktag.js')],
