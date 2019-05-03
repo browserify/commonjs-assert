@@ -925,16 +925,18 @@ assert.deepStrictEqual(obj1, obj2);
 {
   // TODO(BridgeAR): Check if it would not be better to detect proxies instead
   // of just using the proxy value.
-  const arrProxy = new Proxy([1, 2], {});
-  assert.deepStrictEqual(arrProxy, [1, 2]);
-  const tmp = util.inspect.defaultOptions;
-  util.inspect.defaultOptions = { showProxy: true };
-  assert.throws(
-    () => assert.deepStrictEqual(arrProxy, [1, 2, 3]),
-    // { message: `${defaultMsgStartFull}\n\n` +
-    //            '  [\n    1,\n    2,\n-   3\n  ]' }
-  );
-  util.inspect.defaultOptions = tmp;
+  if (typeof Proxy !== 'undefined') {
+    const arrProxy = new Proxy([1, 2], {});
+    assert.deepStrictEqual(arrProxy, [1, 2]);
+    const tmp = util.inspect.defaultOptions;
+    util.inspect.defaultOptions = { showProxy: true };
+    assert.throws(
+      () => assert.deepStrictEqual(arrProxy, [1, 2, 3]),
+      // { message: `${defaultMsgStartFull}\n\n` +
+      //            '  [\n    1,\n    2,\n-   3\n  ]' }
+    );
+    util.inspect.defaultOptions = tmp;
+  }
 
   // [browserify] Safari fails this test. I'm not sure why, Chrome and Firefox pass.
   // @BridgeAR is it ok to comment out this test?
