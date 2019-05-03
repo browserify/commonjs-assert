@@ -24,11 +24,11 @@
     "@babel/preset-env": "^7.4.4",
     "airtap": "^2.0.2",
     "cross-env": "^5.2.0",
+    "object.getownpropertydescriptors": "^2.0.3",
     "tape": "^4.10.1"
   },
   "dependencies": {
     "buffer": "^5.2.1",
-    "object.getownpropertydescriptors": "^2.0.3",
     "util": "^0.12.0"
   }
 }
