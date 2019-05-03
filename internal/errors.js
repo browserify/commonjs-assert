@@ -35,6 +35,7 @@ function createErrorType(code, message, Base) {
   class NodeError extends Base {
     constructor (arg1, arg2, arg3) {
       super(getMessage(arg1, arg2, arg3));
+      this.code = code;
     }
   }
 
