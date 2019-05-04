@@ -8,6 +8,14 @@ const { codes: {
   ERR_INVALID_ARG_TYPE
 } } = require('../errors');
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+function endsWith(str, search, this_len) {
+	if (this_len === undefined || this_len > str.length) {
+		this_len = str.length;
+	}
+	return str.substring(this_len - search.length, this_len) === search;
+}
+
 let blue = '';
 let green = '';
 let red = '';
@@ -230,7 +238,7 @@ function createErrDiff(actual, expected, operator) {
       // a trailing comma. In that case it is actually identical and we should
       // mark it as such.
       let divergingLines = actualLine !== expectedLine &&
-                           (!actualLine.endsWith(',') ||
+                           (!endsWith(actualLine, ',') ||
                             actualLine.slice(0, -1) !== expectedLine);
       // If the expected line has a trailing comma but is otherwise identical,
       // add a comma at the end of the actual line. Otherwise the output could
@@ -242,7 +250,7 @@ function createErrDiff(actual, expected, operator) {
       //   ]
       //
       if (divergingLines &&
-          expectedLine.endsWith(',') &&
+          endsWith(expectedLine, ',') &&
           expectedLine.slice(0, -1) === actualLine) {
         divergingLines = false;
         actualLine += ',';

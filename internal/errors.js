@@ -102,7 +102,7 @@ createErrorType('ERR_INVALID_ARG_TYPE',
     }
 
     let msg;
-    if (name.endsWith(' argument')) {
+    if (endsWith(name, ' argument')) {
       // For cases like 'first argument'
       msg = `The ${name} ${determiner} ${oneOf(expected, 'type')}`;
     } else {
