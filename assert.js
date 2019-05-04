@@ -303,18 +303,19 @@ assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
 
 class Comparison {
   constructor(obj, keys, actual) {
-    for (const key of keys) {
+    keys.forEach(key => {
       if (key in obj) {
         if (actual !== undefined &&
-            typeof actual[key] === 'string' &&
-            isRegExp(obj[key]) &&
-            obj[key].test(actual[key])) {
+          typeof actual[key] === 'string' &&
+          isRegExp(obj[key]) &&
+          obj[key].test(actual[key])
+        ) {
           this[key] = actual[key];
         } else {
           this[key] = obj[key];
         }
       }
-    }
+    });
   }
 }
 
