@@ -359,7 +359,7 @@ try {
       () => method(fn),
       {
         code: 'ERR_INVALID_ARG_TYPE',
-        type: TypeError,
+        // type: TypeError,
         // message: 'The "fn" argument must be of type Function. Received ' +
         //          `type ${typeof fn}`
       }
@@ -469,7 +469,7 @@ assert.throws(
     },
     {
       code: 'ERR_ASSERTION',
-      type: assert.AssertionError,
+      // type: assert.AssertionError,
       // message: 'The expression evaluated to a falsy value:\n\n  ' +
       //          "assert.ok(\n    typeof 123 === 'string'\n  )\n"
     }
@@ -645,7 +645,7 @@ common.expectsError(
   () => assert.ok(null),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // generatedMessage: true,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert.ok(null)\n'
@@ -655,7 +655,7 @@ common.expectsError(
   () => assert(typeof 123 === 'string'),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // generatedMessage: true,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          "assert(typeof 123 === 'string')\n"
@@ -666,7 +666,7 @@ common.expectsError(
   () => assert(false, Symbol('foo')),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     generatedMessage: false,
     // message: 'Symbol(foo)'
   }
@@ -717,7 +717,7 @@ common.expectsError(
   },
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n' +
     //          '  a(\n' +
     //          '    (() => \'string\')()\n' +
@@ -741,7 +741,7 @@ common.expectsError(
   },
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n' +
     //          '  a(\n' +
     //          '    (() => \'string\')()\n' +
@@ -762,7 +762,7 @@ Buffer
 );
 }, {
   code: 'ERR_ASSERTION',
-  type: assert.AssertionError,
+  // type: assert.AssertionError,
   // message: 'The expression evaluated to a falsy value:\n\n' +
   //          '  a((\n' +
   //          '    () => \'string\')() ===\n' +
@@ -779,7 +779,7 @@ common.expectsError(
   },
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert(null, undefined)\n'
   }
@@ -792,7 +792,7 @@ common.expectsError(
   },
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'ok(null, undefined)\n'
   }
@@ -803,7 +803,7 @@ common.expectsError(
   () => assert['ok']["apply"](null, [0]),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert[\'ok\']["apply"](null, [0])\n'
   }
@@ -816,7 +816,7 @@ common.expectsError(
   },
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  fn(value)\n'
   }
 );
@@ -825,7 +825,7 @@ common.expectsError(
   () => assert.ok.call(null, 0),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'The expression evaluated to a falsy value:\n\n  ' +
     //          'assert.ok.call(null, 0)\n',
     // generatedMessage: true
@@ -836,7 +836,7 @@ common.expectsError(
   () => assert.ok.call(null, 0, 'test'),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'test',
     generatedMessage: false
   }
@@ -847,7 +847,7 @@ common.expectsError(
   () => new Function('assert', 'assert(1 === 2);')(assert),
   {
     code: 'ERR_ASSERTION',
-    type: assert.AssertionError,
+    // type: assert.AssertionError,
     // message: 'false == true'
   }
 );
@@ -856,7 +856,7 @@ common.expectsError(
   () => assert.throws(() => {}, 'Error message', 'message'),
   {
     code: 'ERR_INVALID_ARG_TYPE',
-    type: TypeError,
+    // type: TypeError,
     // message: 'The "error" argument must be one of type Object, Error, ' +
     //          'Function, or RegExp. Received type string'
   }
@@ -942,7 +942,7 @@ common.expectsError(
   common.expectsError(
     () => assert.throws(() => { throw new Error(); }, { foo: 'bar' }, 'foobar'),
     {
-      type: assert.AssertionError,
+      // type: assert.AssertionError,
       code: 'ERR_ASSERTION',
       // message: 'foobar'
     }
@@ -951,7 +951,7 @@ common.expectsError(
   common.expectsError(
     () => a.doesNotThrow(() => { throw new Error(); }, { foo: 'bar' }),
     {
-      type: TypeError,
+      // type: TypeError,
       code: 'ERR_INVALID_ARG_TYPE',
       // message: 'The "expected" argument must be one of type Function or ' +
       //          'RegExp. Received type object'
