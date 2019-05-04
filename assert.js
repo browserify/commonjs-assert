@@ -34,6 +34,8 @@ const AssertionError = require('./internal/assert/assertion_error');
 const { inspect } = require('util/');
 const { isPromise, isRegExp } = require('util/').types;
 
+const objectAssign = Object.assign ? Object.assign : require('es6-object-assign').assign;
+
 const errorCache = new Map();
 
 let isDeepEqual;
@@ -594,7 +596,7 @@ assert.ifError = function ifError(err) {
 function strict(...args) {
   innerOk(strict, args.length, ...args);
 }
-assert.strict = Object.assign(strict, assert, {
+assert.strict = objectAssign(strict, assert, {
   equal: assert.strictEqual,
   deepEqual: assert.deepStrictEqual,
   notEqual: assert.notStrictEqual,

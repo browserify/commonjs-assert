@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "buffer": "^5.2.1",
+    "es6-object-assign": "^1.1.0",
     "util": "^0.12.0"
   }
 }
