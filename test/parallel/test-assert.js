@@ -137,7 +137,7 @@ assert.throws(() => thrower(TypeError));
   } catch (e) {
     threw = true;
     assert.ok(e instanceof a.AssertionError);
-    assert.ok(!e.stack.includes('at Function.doesNotThrow'));
+    assert.ok(!common.includes(e.stack, 'at Function.doesNotThrow'));
   }
   assert.ok(threw, 'a.doesNotThrow is not catching type matching errors');
 }
@@ -251,7 +251,7 @@ a.throws(() => thrower(TypeError), (err) => {
   } catch (e) {
     threw = true;
     assert.ok(e instanceof a.AssertionError);
-    assert.ok(!e.stack.includes('at Function.throws'));
+    assert.ok(!common.includes(e.stack, 'at Function.throws'));
   }
   assert.ok(threw);
 }
@@ -341,13 +341,13 @@ try {
     }, TypeError, rangeError);
   } catch (e) {
     threw = true;
-    assert.ok(e.message.includes(rangeError.message));
+    assert.ok(common.includes(e.message, rangeError.message));
     assert.ok(e instanceof assert.AssertionError);
     // [browserify]
     // This fails because `doesNotThrow` appears in the stack trace.
     // I'm not quite sure why that's an issue if the error message is set
     // and the above tests pass so commenting out for now.
-    // assert.ok(!e.stack.includes('doesNotThrow'), e.stack);
+    // assert.ok(!common.includes(e.stack, 'doesNotThrow'), e.stack);
   }
   assert.ok(threw);
 }

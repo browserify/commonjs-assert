@@ -42,6 +42,19 @@ function repeat(str, count) {
   return str;
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+function includes(str, search, start) {
+  if (typeof start !== 'number') {
+    start = 0;
+  }
+
+  if (start + search.length > str.length) {
+    return false;
+  } else {
+    return str.indexOf(search, start) !== -1;
+  }
+}
+
 const isBrowser = typeof window !== 'undefined';
 
 const bigIntSupported = typeof BigInt !== 'undefined';
@@ -273,6 +286,7 @@ process.on('unhandledRejection', crashOnUnhandledRejection);
 module.exports = {
   getOwnPropertyDescriptors,
   repeat,
+  includes,
   isBrowser,
   bigIntSupported,
   symbolToStringTagSupported,

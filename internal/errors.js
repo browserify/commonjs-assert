@@ -106,7 +106,7 @@ createErrorType('ERR_INVALID_ARG_TYPE',
       // For cases like 'first argument'
       msg = `The ${name} ${determiner} ${oneOf(expected, 'type')}`;
     } else {
-      const type = name.includes('.') ? 'property' : 'argument';
+      const type = includes(name, '.') ? 'property' : 'argument';
       msg = `The "${name}" ${type} ${determiner} ${oneOf(expected, 'type')}`;
     }
 

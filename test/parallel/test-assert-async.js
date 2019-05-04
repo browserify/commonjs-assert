@@ -79,7 +79,7 @@ const invalidThenableFunc = () => {
     assert.strictEqual(err.message,
                        'Missing expected rejection (mustNotCall).');
     assert.strictEqual(err.operator, 'rejects');
-    assert.ok(!err.stack.includes('at Function.rejects'));
+    assert.ok(!common.includes(err.stack, 'at Function.rejects'));
     return true;
   };
 
@@ -170,7 +170,7 @@ promises.push(assert.rejects(
                        'Got unwanted rejection.\nActual message: "Failed"');
     assert.strictEqual(err.operator, 'doesNotReject');
     assert.ok(err.stack);
-    assert.ok(!err.stack.includes('at Function.doesNotReject'));
+    assert.ok(!common.includes(err.stack, 'at Function.doesNotReject'));
     return true;
   };
 
