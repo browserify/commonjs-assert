@@ -6,6 +6,7 @@
 const regexFlagsSupported = /a/g.flags !== undefined;
 
 const objectIs = Object.is ? Object.is : require('object-is');
+const objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : () => [];
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -50,7 +51,7 @@ function getOwnNonIndexProperties(value) {
   return Object.keys(value)
     .filter(isNonIndex)
     .concat(
-      Object.getOwnPropertySymbols(value)
+      objectGetOwnPropertySymbols(value)
         .filter(Object.prototype.propertyIsEnumerable.bind(value))
     );
 }
@@ -273,7 +274,7 @@ function keyCheck(val1, val2, strict, memos, iterationType, aKeys) {
   }
 
   if (strict && arguments.length === 5) {
-    const symbolKeysA = Object.getOwnPropertySymbols(val1);
+    const symbolKeysA = objectGetOwnPropertySymbols(val1);
     if (symbolKeysA.length !== 0) {
       let count = 0;
       for (i = 0; i < symbolKeysA.length; i++) {
@@ -288,13 +289,13 @@ function keyCheck(val1, val2, strict, memos, iterationType, aKeys) {
           return false;
         }
       }
-      const symbolKeysB = Object.getOwnPropertySymbols(val2);
+      const symbolKeysB = objectGetOwnPropertySymbols(val2);
       if (symbolKeysA.length !== symbolKeysB.length &&
           getEnumerables(val2, symbolKeysB).length !== count) {
         return false;
       }
     } else {
-      const symbolKeysB = Object.getOwnPropertySymbols(val2);
+      const symbolKeysB = objectGetOwnPropertySymbols(val2);
       if (symbolKeysB.length !== 0 &&
           getEnumerables(val2, symbolKeysB).length !== 0) {
         return false;
