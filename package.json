@@ -30,6 +30,7 @@
     "tape": "^4.10.1"
   },
   "dependencies": {
+    "array-from": "^2.1.1",
     "buffer": "^5.2.1",
     "es6-object-assign": "^1.1.0",
     "object-is": "^1.0.1",
