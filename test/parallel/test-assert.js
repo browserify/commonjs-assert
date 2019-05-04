@@ -82,7 +82,7 @@ assert.throws(
 );
 
 assert.throws(
-  () => a.notStrictEqual('a '.repeat(30), 'a '.repeat(30)),
+  () => a.notStrictEqual(common.repeat('a ', 30), common.repeat('a ', 30)),
   {
     // message: 'Expected "actual" to be strictly unequal to: ' +
     //          `'${'a '.repeat(30)}'`,
@@ -393,7 +393,7 @@ assert.throws(() => { throw new Error(); }, (err) => err instanceof Error);
 
 // Long values should be truncated for display.
 assert.throws(() => {
-  assert.strictEqual('A'.repeat(1000), '');
+  assert.strictEqual(common.repeat('A', 1000), '');
 }, {
   code: 'ERR_ASSERTION',
   // message: `${strictEqualMessageStart}+ actual - expected\n\n` +
@@ -595,9 +595,9 @@ assert.throws(
     `${actExp} ... Lines skipped\n` +
     '\n' +
     '  [\n' +
-    '+   1,\n'.repeat(10) +
+    common.repeat('+   1,\n', 10) +
     '...\n' +
-    '-   2,\n'.repeat(10) +
+    common.repeat('-   2,\n', 10) +
     '...';
   assert.throws(
     () => assert.deepEqual(Array(12).fill(1), Array(12).fill(2)),
@@ -632,7 +632,7 @@ assert.throws(
   );
 
   message = 'Expected "actual" not to be strictly deep-equal to:' +
-            `\n\n[${'\n  1,'.repeat(25)}\n...\n`;
+            `\n\n[${common.repeat('\n  1,', 25)}\n...\n`;
   const data = Array(31).fill(1);
   assert.throws(
     () => assert.notDeepEqual(data, data),

@@ -676,7 +676,7 @@ assert.throws(
 );
 
 assert.throws(
-  () => { assert.notDeepEqual('a'.repeat(1024), 'a'.repeat(1024)); },
+  () => { assert.notDeepEqual(common.repeat('a', 1024), common.repeat('a', 1024)); },
   AssertionError,
   'notDeepEqual("a".repeat(1024), "a".repeat(1024))'
 );

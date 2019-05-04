@@ -16,6 +16,44 @@ function endsWith(str, search, this_len) {
 	return str.substring(this_len - search.length, this_len) === search;
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+function repeat(str, count) {
+  if (str == null)
+    throw new TypeError('can\'t convert ' + this + ' to object');
+
+  str = '' + str;
+  // To convert string to integer.
+  count = +count;
+  // Check NaN
+  if (count != count)
+    count = 0;
+
+  if (count < 0)
+    throw new RangeError('repeat count must be non-negative');
+
+  if (count == Infinity)
+    throw new RangeError('repeat count must be less than infinity');
+
+  count = Math.floor(count);
+  if (str.length == 0 || count == 0)
+    return '';
+
+  // Ensuring count is a 31-bit integer allows us to heavily optimize the
+  // main part. But anyway, most current (August 2014) browsers can't handle
+  // strings 1 << 28 chars or longer, so:
+  if (str.length * count >= 1 << 28)
+    throw new RangeError('repeat count must not overflow maximum string size');
+
+  var maxCount = str.length * count;
+  count = Math.floor(Math.log(count) / Math.log(2));
+  while (count) {
+     str += str;
+     count--;
+  }
+  str += str.substring(0, maxCount - str.length);
+  return str;
+}
+
 let blue = '';
 let green = '';
 let red = '';
@@ -128,7 +166,7 @@ function createErrDiff(actual, expected, operator) {
         if (i > 2) {
           // Add position indicator for the first mismatch in case it is a
           // single line and the input length is less than the column length.
-          indicator = `\n  ${' '.repeat(i)}^`;
+          indicator = `\n  ${repeat(' ', i)}^`;
           i = 0;
         }
       }
