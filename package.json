@@ -8,6 +8,7 @@
   "repository": "browserify/commonjs-assert",
   "scripts": {
     "build": "babel assert.js test.js --out-dir build && babel internal --out-dir build/internal && babel test --out-dir build/test",
+    "dev": "babel assert.js test.js --watch --out-dir build & babel internal --watch --out-dir build/internal & babel test --watch --out-dir build/test",
     "test": "npm run build && npm run test:nobuild",
     "test:nobuild": "node build/test.js",
     "test:source": "node test.js",
