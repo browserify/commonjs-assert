@@ -35,6 +35,7 @@ const { inspect } = require('util/');
 const { isPromise, isRegExp } = require('util/').types;
 
 const objectAssign = Object.assign ? Object.assign : require('es6-object-assign').assign;
+const objectIs = Object.is ? Object.is : require('object-is');
 
 const errorCache = new Map();
 
@@ -274,7 +275,7 @@ assert.strictEqual = function strictEqual(actual, expected, message) {
   if (arguments.length < 2) {
     throw new ERR_MISSING_ARGS('actual', 'expected');
   }
-  if (!Object.is(actual, expected)) {
+  if (!objectIs(actual, expected)) {
     innerFail({
       actual,
       expected,
@@ -289,7 +290,7 @@ assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
   if (arguments.length < 2) {
     throw new ERR_MISSING_ARGS('actual', 'expected');
   }
-  if (Object.is(actual, expected)) {
+  if (objectIs(actual, expected)) {
     innerFail({
       actual,
       expected,

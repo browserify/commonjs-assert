@@ -5,6 +5,8 @@
 
 const regexFlagsSupported = /a/g.flags !== undefined;
 
+const objectIs = Object.is ? Object.is : require('object-is');
+
 function uncurryThis(f) {
   return f.call.bind(f);
 }
@@ -98,7 +100,7 @@ function areEqualArrayBuffers(buf1, buf2) {
 function isEqualBoxedPrimitive(val1, val2) {
   if (isNumberObject(val1)) {
     return isNumberObject(val2) &&
-           Object.is(Number.prototype.valueOf.call(val1),
+           objectIs(Number.prototype.valueOf.call(val1),
                      Number.prototype.valueOf.call(val2));
   }
   if (isStringObject(val1)) {
@@ -141,7 +143,7 @@ function innerDeepEqual(val1, val2, strict, memos) {
   if (val1 === val2) {
     if (val1 !== 0)
       return true;
-    return strict ? Object.is(val1, val2) : true;
+    return strict ? objectIs(val1, val2) : true;
   }
 
   // Check more closely if val1 and val2 are equal.
