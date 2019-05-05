@@ -184,10 +184,11 @@ function expectWarning(nameOrMap, expected, code) {
 
 class Comparison {
   constructor(obj, keys) {
-    for (const key of keys) {
-      if (key in obj)
+    keys.forEach(key => {
+      if (key in obj) {
         this[key] = obj[key];
-    }
+      }
+    });
   }
 }
 
