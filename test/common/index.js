@@ -247,7 +247,7 @@ function expectsError(fn, settings, exact) {
 
     // Check all error properties.
     const keys = Object.keys(settings);
-    for (const key of keys) {
+    keys.forEach(key => {
       if (!isDeepStrictEqual(error[key], innerSettings[key])) {
         // Create placeholder objects to create a nice output.
         const a = new Comparison(error, keys);
@@ -271,7 +271,7 @@ function expectsError(fn, settings, exact) {
         });
       }
 
-    }
+    });
     return true;
   }
   if (fn) {

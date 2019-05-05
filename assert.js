@@ -381,14 +381,16 @@ function expectedException(actual, expected, msg, fn) {
                                       expected, 'may not be an empty object');
     }
     if (isDeepEqual === undefined) lazyLoadComparison();
-    for (const key of keys) {
-      if (typeof actual[key] === 'string' &&
-          isRegExp(expected[key]) &&
-          expected[key].test(actual[key])) {
-        continue;
+    keys.forEach(key => {
+      if (
+        typeof actual[key] === 'string' &&
+        isRegExp(expected[key]) &&
+        expected[key].test(actual[key])
+      ) {
+        return;
       }
       compareExceptionKey(actual, expected, key, msg, keys, fn);
-    }
+    });
     return true;
   }
   // Guard instanceof against arrow functions as they don't have a prototype.

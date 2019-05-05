@@ -5,6 +5,8 @@
 
 const regexFlagsSupported = /a/g.flags !== undefined;
 
+const arrayFrom = require('array-from');
+
 const objectIs = Object.is ? Object.is : require('object-is');
 const objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : () => [];
 
@@ -344,7 +346,9 @@ function keyCheck(val1, val2, strict, memos, iterationType, aKeys) {
 
 function setHasEqualElement(set, val1, strict, memo) {
   // Go looking.
-  for (const val2 of set) {
+  const setValues = arrayFrom(set.values());
+  for (let i = 0; i < setValues.length; i++) {
+    const val2 = setValues[i];
     if (innerDeepEqual(val1, val2, strict, memo)) {
       // Remove the matching element to make sure we do not check that again.
       set.delete(val2);
@@ -405,7 +409,9 @@ function setEquiv(a, b, strict, memo) {
   // This is a lazily initiated Set of entries which have to be compared
   // pairwise.
   let set = null;
-  for (const val of a) {
+  const aValues = arrayFrom(a.values());
+  for (let i = 0; i < aValues.length; i++) {
+    const val = aValues[i];
     // Note: Checking for the objects first improves the performance for object
     // heavy sets but it is a minor slow down for primitives. As they are fast
     // to check this improves the worst case scenario instead.
@@ -435,7 +441,9 @@ function setEquiv(a, b, strict, memo) {
   }
 
   if (set !== null) {
-    for (const val of b) {
+    const bValues = arrayFrom(b.values());
+    for (let i = 0; i < bValues.length; i++) {
+      const val = bValues[i];
       // We have to check if a primitive value is already
       // matching and only if it's not, go hunting for it.
       if (typeof val === 'object' && val !== null) {
@@ -457,7 +465,9 @@ function mapHasEqualEntry(set, map, key1, item1, strict, memo) {
   // To be able to handle cases like:
   //   Map([[{}, 'a'], [{}, 'b']]) vs Map([[{}, 'b'], [{}, 'a']])
   // ... we need to consider *all* matching keys, not just the first we find.
-  for (const key2 of set) {
+  const setValues = arrayFrom(set.values());
+  for (let i = 0; i < setValues.length; i++) {
+    const key2 = setValues[i];
     if (innerDeepEqual(key1, key2, strict, memo) &&
       innerDeepEqual(item1, map.get(key2), strict, memo)) {
       set.delete(key2);
@@ -471,7 +481,9 @@ function mapHasEqualEntry(set, map, key1, item1, strict, memo) {
 function mapEquiv(a, b, strict, memo) {
   let set = null;
 
-  for (const [key, item1] of a) {
+  const aEntries = arrayFrom(a.entries());
+  for (let i = 0; i < aEntries.length; i++) {
+    const [key, item1] = aEntries[i];
     if (typeof key === 'object' && key !== null) {
       if (set === null) {
         set = new Set();
@@ -498,7 +510,9 @@ function mapEquiv(a, b, strict, memo) {
   }
 
   if (set !== null) {
-    for (const [key, item] of b) {
+    const bEntries = arrayFrom(b.entries());
+    for (let i = 0; i < bEntries.length; i++) {
+      const [key, item] = bEntries[i];
       if (typeof key === 'object' && key !== null) {
         if (!mapHasEqualEntry(set, a, key, item, strict, memo))
           return false;

@@ -45,9 +45,9 @@ if (process.stdout && process.stdout.isTTY)
 if (!isBrowser) {  // At the moment global has its own type tag
   const fakeGlobal = {};
   Object.setPrototypeOf(fakeGlobal, Object.getPrototypeOf(global));
-  for (const prop of Object.keys(global)) {
+  Object.keys(global).forEach(prop => {
     fakeGlobal[prop] = global[prop];
-  }
+  });
   assert.notDeepEqual(fakeGlobal, global);
   // Message will be truncated anyway, don't validate
   assert.throws(() => assert.deepStrictEqual(fakeGlobal, global),
@@ -58,9 +58,9 @@ if (!isBrowser) {  // At the moment global has its own type tag
 if (!isBrowser) { // At the moment process has its own type tag
   const fakeProcess = {};
   Object.setPrototypeOf(fakeProcess, Object.getPrototypeOf(process));
-  for (const prop of Object.keys(process)) {
+  Object.keys(process).forEach(prop => {
     fakeProcess[prop] = process[prop];
-  }
+  });
   assert.notDeepEqual(fakeProcess, process);
   // Message will be truncated anyway, don't validate
   assert.throws(() => assert.deepStrictEqual(fakeProcess, process),

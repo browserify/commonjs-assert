@@ -81,9 +81,9 @@ const kMaxShortLength = 10;
 function copyError(source) {
   const keys = Object.keys(source);
   const target = Object.create(Object.getPrototypeOf(source));
-  for (const key of keys) {
+  keys.forEach(key => {
     target[key] = source[key];
-  }
+  });
   Object.defineProperty(target, 'message', { value: source.message });
   return target;
 }

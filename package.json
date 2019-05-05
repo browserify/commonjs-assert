@@ -24,13 +24,13 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "airtap": "^2.0.2",
-    "array-from": "^2.1.1",
     "core-js": "^3.0.1",
     "cross-env": "^5.2.0",
     "object.getownpropertydescriptors": "^2.0.3",
     "tape": "^4.10.1"
   },
   "dependencies": {
+    "array-from": "^2.1.1",
     "buffer": "^5.2.1",
     "es6-object-assign": "^1.1.0",
     "object-is": "^1.0.1",
