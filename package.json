@@ -27,11 +27,11 @@
     "array-fill": "^1.2.0",
     "core-js": "^3.0.1",
     "cross-env": "^5.2.0",
+    "object.entries": "^1.1.0",
     "object.getownpropertydescriptors": "^2.0.3",
     "tape": "^4.10.1"
   },
   "dependencies": {
-    "array-from": "^2.1.1",
     "buffer": "^5.2.1",
     "es6-object-assign": "^1.1.0",
     "is-nan": "^1.2.1",

@@ -11,7 +11,13 @@ const defaultMsgStart = 'Expected values to be strictly deep-equal:\n';
 const defaultMsgStartFull = `${defaultMsgStart}+ actual - expected`;
 
 const objectEntries = require('object.entries');
-const arrayFrom = require('array-from');
+
+const arrayFromSet = set => {
+  const array = [];
+  set.forEach(value => array.push(value));
+
+  return array;
+};
 
 // Disable colored output to prevent color codes from breaking assertion
 // message comparisons. This should only be an issue when process.stdout
@@ -38,7 +44,7 @@ const createMap = (values = []) => {
 // for assert.throws()
 function re(literals, ...values) {
   let result = 'Expected values to be loosely deep-equal:\n\n';
-  arrayFrom(values.entries()).forEach(([i, value]) => {
+  values.forEach((value, i) => {
     const str = util.inspect(value, {
       compact: false,
       depth: 1000,
@@ -192,8 +198,8 @@ assert.throws(
     (function() { return arguments; })(1)
   ]);
 
-  arrayFrom(similar).forEach(a => {
-    arrayFrom(similar).forEach(b => {
+  arrayFromSet(similar).forEach(a => {
+    arrayFromSet(similar).forEach(b => {
       if (a !== b) {
         assert.notDeepEqual(a, b);
         assert.throws(

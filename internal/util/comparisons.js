@@ -5,7 +5,19 @@
 
 const regexFlagsSupported = /a/g.flags !== undefined;
 
-const arrayFrom = require('array-from');
+const arrayFromSet = set => {
+  const array = [];
+  set.forEach(value => array.push(value));
+
+  return array;
+};
+
+const arrayFromMap = map => {
+  const array = [];
+  map.forEach((value, key) => array.push([key, value]));
+
+  return array;
+};
 
 const objectIs = Object.is ? Object.is : require('object-is');
 const objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : () => [];
@@ -347,7 +359,7 @@ function keyCheck(val1, val2, strict, memos, iterationType, aKeys) {
 
 function setHasEqualElement(set, val1, strict, memo) {
   // Go looking.
-  const setValues = arrayFrom(set.values());
+  const setValues = arrayFromSet(set);
   for (let i = 0; i < setValues.length; i++) {
     const val2 = setValues[i];
     if (innerDeepEqual(val1, val2, strict, memo)) {
@@ -410,7 +422,7 @@ function setEquiv(a, b, strict, memo) {
   // This is a lazily initiated Set of entries which have to be compared
   // pairwise.
   let set = null;
-  const aValues = arrayFrom(a.values());
+  const aValues = arrayFromSet(a);
   for (let i = 0; i < aValues.length; i++) {
     const val = aValues[i];
     // Note: Checking for the objects first improves the performance for object
@@ -442,7 +454,7 @@ function setEquiv(a, b, strict, memo) {
   }
 
   if (set !== null) {
-    const bValues = arrayFrom(b.values());
+    const bValues = arrayFromSet(b);
     for (let i = 0; i < bValues.length; i++) {
       const val = bValues[i];
       // We have to check if a primitive value is already
@@ -466,7 +478,7 @@ function mapHasEqualEntry(set, map, key1, item1, strict, memo) {
   // To be able to handle cases like:
   //   Map([[{}, 'a'], [{}, 'b']]) vs Map([[{}, 'b'], [{}, 'a']])
   // ... we need to consider *all* matching keys, not just the first we find.
-  const setValues = arrayFrom(set.values());
+  const setValues = arrayFromSet(set);
   for (let i = 0; i < setValues.length; i++) {
     const key2 = setValues[i];
     if (innerDeepEqual(key1, key2, strict, memo) &&
@@ -482,7 +494,7 @@ function mapHasEqualEntry(set, map, key1, item1, strict, memo) {
 function mapEquiv(a, b, strict, memo) {
   let set = null;
 
-  const aEntries = arrayFrom(a.entries());
+  const aEntries = arrayFromMap(a);
   for (let i = 0; i < aEntries.length; i++) {
     const [key, item1] = aEntries[i];
     if (typeof key === 'object' && key !== null) {
@@ -511,7 +523,7 @@ function mapEquiv(a, b, strict, memo) {
   }
 
   if (set !== null) {
-    const bEntries = arrayFrom(b.entries());
+    const bEntries = arrayFromMap(b);
     for (let i = 0; i < bEntries.length; i++) {
       const [key, item] = bEntries[i];
       if (typeof key === 'object' && key !== null) {

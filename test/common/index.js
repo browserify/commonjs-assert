@@ -4,6 +4,10 @@ const getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors
   ? Object.getOwnPropertyDescriptors
   : require('object.getownpropertydescriptors');
 
+const objectEntries = Object.entries
+  ? Object.entries
+  : require('object.entries');
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
 function repeat(str, count) {
   if (str == null)
@@ -139,7 +143,7 @@ function _expectWarning(name, expected, code) {
   if (typeof expected === 'string') {
     expected = [[expected, code]];
   } else if (!Array.isArray(expected)) {
-    expected = Object.entries(expected).map(([a, b]) => [b, a]);
+    expected = objectEntries(expected).map(([a, b]) => [b, a]);
   } else if (!(Array.isArray(expected[0]))) {
     expected = [[expected[0], expected[1]]];
   }
