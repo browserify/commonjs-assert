@@ -25,6 +25,8 @@
 
 'use strict';
 
+const arrayFill = require('array-fill');
+
 const common = require('../common');
 const assert = require('../../assert');
 const { inspect } = require('util/');
@@ -602,7 +604,7 @@ assert.throws(
     common.repeat('-   2,\n', 10) +
     '...';
   assert.throws(
-    () => assert.deepEqual(Array(12).fill(1), Array(12).fill(2)),
+    () => assert.deepEqual(arrayFill(Array(12), 1), arrayFill(Array(12), 2)),
     // { message }
   );
 
@@ -635,7 +637,7 @@ assert.throws(
 
   message = 'Expected "actual" not to be strictly deep-equal to:' +
             `\n\n[${common.repeat('\n  1,', 25)}\n...\n`;
-  const data = Array(31).fill(1);
+  const data = arrayFill(Array(31), 1);
   assert.throws(
     () => assert.notDeepEqual(data, data),
     // { message }
@@ -1172,7 +1174,7 @@ assert.throws(
 {
   let threw = false;
   try {
-    assert.deepStrictEqual(Array(100).fill(1), 'foobar');
+    assert.deepStrictEqual(arrayFill(Array(100), 1), 'foobar');
   } catch (err) {
     threw = true;
     // assert(/actual: \[Array],\n  expected: 'foobar',/.test(inspect(err)));

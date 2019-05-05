@@ -24,6 +24,7 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "airtap": "^2.0.2",
+    "array-fill": "^1.2.0",
     "core-js": "^3.0.1",
     "cross-env": "^5.2.0",
     "object.getownpropertydescriptors": "^2.0.3",
