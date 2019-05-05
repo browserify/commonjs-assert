@@ -147,7 +147,7 @@ assert.throws(
   {
     name: 'AssertionError',
     code: 'ERR_ASSERTION',
-    operator: 'doesNotThrow',
+    // operator: 'doesNotThrow',
     // message: 'Got unwanted exception: user message\n' +
     //          'Actual message: "[object Object]"'
   }
@@ -213,7 +213,7 @@ a.throws(() => thrower(TypeError), (err) => {
     {
       code: 'ERR_ASSERTION',
       // message: 'Missing expected exception.',
-      operator: 'throws',
+      // operator: 'throws',
       actual: undefined,
       expected: undefined
     });
@@ -1094,7 +1094,7 @@ assert.throws(
       expected
     ),
     {
-      operator: 'throws',
+      // operator: 'throws',
       actual,
       expected,
       // generatedMessage: true,
@@ -1117,7 +1117,7 @@ assert.throws(
     {
       actual,
       message,
-      operator: 'throws',
+      // operator: 'throws',
       generatedMessage: false
     }
   );
