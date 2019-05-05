@@ -263,7 +263,9 @@ assertNotDeepOrStrict(createSet([1, 2, 3, 4]), createSet([1, 2, 3]));
 assertDeepAndStrictEqual(createSet(['1', '2', '3']), createSet(['1', '2', '3']));
 assertDeepAndStrictEqual(createSet([[1, 2], [3, 4]]), createSet([[3, 4], [1, 2]]));
 assertNotDeepOrStrict(createSet([{ a: 0 }]), createSet([{ a: 1 }]));
-assertNotDeepOrStrict(createSet([Symbol()]), createSet([Symbol()]));
+if (common.symbolSupported) {
+  assertNotDeepOrStrict(createSet([Symbol()]), createSet([Symbol()]));
+}
 
 {
   const a = [ 1, 2 ];
@@ -633,7 +635,7 @@ assert.deepStrictEqual({ a: NaN }, { a: NaN });
 assert.deepStrictEqual([ 1, 2, NaN, 4 ], [ 1, 2, NaN, 4 ]);
 
 // Handle boxed primitives
-{
+if (common.symbolSupported) {
   const boxedString = new String('test');
   const boxedSymbol = Object(Symbol());
   assertNotDeepOrStrict(new Boolean(true), Object(false));
@@ -656,7 +658,7 @@ assertOnlyDeepEqual(0, -0);
 assertDeepAndStrictEqual(-0, -0);
 
 // Handle symbols (enumerable only)
-{
+if (common.symbolSupported) {
   const symbol1 = Symbol();
   const obj1 = { [symbol1]: 1 };
   const obj2 = { [symbol1]: 1 };
@@ -780,13 +782,15 @@ assertNotDeepOrStrict('a', ['a']);
 assertNotDeepOrStrict('a', { 0: 'a' });
 assertNotDeepOrStrict(1, {});
 assertNotDeepOrStrict(true, {});
-assertNotDeepOrStrict(Symbol(), {});
-assertNotDeepOrStrict(Symbol(), Symbol());
+if (common.symbolSupported) {
+  assertNotDeepOrStrict(Symbol(), {});
+  assertNotDeepOrStrict(Symbol(), Symbol());
+}
 
 assertOnlyDeepEqual(4, '4');
 assertOnlyDeepEqual(true, 1);
 
-{
+if (common.symbolSupported) {
   const s = Symbol();
   assertDeepAndStrictEqual(s, s);
 }
@@ -978,7 +982,7 @@ assert.deepStrictEqual(obj1, obj2);
 // Strict equal with identical objects that are not identical
 // by reference and longer than 30 elements
 // E.g., assert.deepStrictEqual({ a: Symbol() }, { a: Symbol() })
-{
+if (common.symbolSupported) {
   const a = {};
   const b = {};
   for (let i = 0; i < 35; i++) {
