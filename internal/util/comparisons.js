@@ -9,6 +9,7 @@ const arrayFrom = require('array-from');
 
 const objectIs = Object.is ? Object.is : require('object-is');
 const objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : () => [];
+const numberIsNaN = Number.isNaN ? Number.isNaN : require('is-nan');
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -152,8 +153,8 @@ function innerDeepEqual(val1, val2, strict, memos) {
   // Check more closely if val1 and val2 are equal.
   if (strict) {
     if (typeof val1 !== 'object') {
-      return typeof val1 === 'number' && Number.isNaN(val1) &&
-        Number.isNaN(val2);
+      return typeof val1 === 'number' && numberIsNaN(val1) &&
+        numberIsNaN(val2);
     }
     if (typeof val2 !== 'object' || val1 === null || val2 === null) {
       return false;
@@ -377,7 +378,7 @@ function findLooseMatchingPrimitives(prim) {
       // a regular number and not NaN.
       // Fall through
     case 'number':
-      if (Number.isNaN(prim)) {
+      if (numberIsNaN(prim)) {
         return false;
       }
   }
