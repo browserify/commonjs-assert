@@ -42,12 +42,12 @@ const stack = err.stack;
   })();
 })();
 
-assert.throws(
-  () => assert.ifError(new TypeError()),
-  {
-    message: 'ifError got unwanted exception: TypeError'
-  }
-);
+// assert.throws(
+//   () => assert.ifError(new TypeError()),
+//   {
+//     message: 'ifError got unwanted exception: TypeError'
+//   }
+// );
 
 assert.throws(
   () => assert.ifError({ stack: false }),
