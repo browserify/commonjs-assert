@@ -204,10 +204,18 @@ function innerDeepEqual(val1, val2, strict, memos) {
     }
     return keyCheck(val1, val2, strict, memos, kIsArray, keys1);
   }
-  // [browserify] This triggers on certain types in IE (Map/Set)
-  // if (val1Tag === '[object Object]') {
-  //   return keyCheck(val1, val2, strict, memos, kNoIterator);
-  // }
+  // [browserify] This triggers on certain types in IE (Map/Set) so we don't
+  // wan't to early return out of the rest of the checks. However we can check
+  // if the second value is one of these values and the first isn't.
+  if (val1Tag === '[object Object]') {
+    // return keyCheck(val1, val2, strict, memos, kNoIterator);
+    if (
+      (!isMap(val1) && isMap(val2)) ||
+      (!isSet(val1) && isSet(val2))
+    ) {
+      return false;
+    }
+  }
   if (isDate(val1)) {
     if (!isDate(val2) || Date.prototype.getTime.call(val1) !== Date.prototype.getTime.call(val2)) {
       return false;
