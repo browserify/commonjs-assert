@@ -19,6 +19,21 @@ const arrayFrom = require('array-from');
 if (process.stdout && process.stdout.isTTY)
   process.env.NODE_DISABLE_COLORS = '1';
 
+// Allows us to create Sets/Maps from arrays in IE
+const createSet = (values = []) => {
+  const set = new Set();
+  values.forEach(value => set.add(value));
+
+  return set;
+};
+
+const createMap = (values = []) => {
+  const map = new Map();
+  values.forEach(([key, value]) => map.set(key, value));
+
+  return map;
+};
+
 // Template tag function turning an error message into a RegExp
 // for assert.throws()
 function re(literals, ...values) {
@@ -162,7 +177,7 @@ assert.throws(
 // For these weird cases, deepEqual should pass (at least for now),
 // but deepStrictEqual should throw.
 {
-  const similar = new Set([
+  const similar = createSet([
     { 0: 1 },  // Object
     new String('1'),  // Object
     [1],  // Array
@@ -233,16 +248,16 @@ function assertOnlyDeepEqual(a, b, err) {
 }
 
 // es6 Maps and Sets
-assertDeepAndStrictEqual(new Set(), new Set());
-assertDeepAndStrictEqual(new Map(), new Map());
+assertDeepAndStrictEqual(createSet(), createSet());
+assertDeepAndStrictEqual(createMap(), createMap());
 
-assertDeepAndStrictEqual(new Set([1, 2, 3]), new Set([1, 2, 3]));
-assertNotDeepOrStrict(new Set([1, 2, 3]), new Set([1, 2, 3, 4]));
-assertNotDeepOrStrict(new Set([1, 2, 3, 4]), new Set([1, 2, 3]));
-assertDeepAndStrictEqual(new Set(['1', '2', '3']), new Set(['1', '2', '3']));
-assertDeepAndStrictEqual(new Set([[1, 2], [3, 4]]), new Set([[3, 4], [1, 2]]));
-assertNotDeepOrStrict(new Set([{ a: 0 }]), new Set([{ a: 1 }]));
-assertNotDeepOrStrict(new Set([Symbol()]), new Set([Symbol()]));
+assertDeepAndStrictEqual(createSet([1, 2, 3]), createSet([1, 2, 3]));
+assertNotDeepOrStrict(createSet([1, 2, 3]), createSet([1, 2, 3, 4]));
+assertNotDeepOrStrict(createSet([1, 2, 3, 4]), createSet([1, 2, 3]));
+assertDeepAndStrictEqual(createSet(['1', '2', '3']), createSet(['1', '2', '3']));
+assertDeepAndStrictEqual(createSet([[1, 2], [3, 4]]), createSet([[3, 4], [1, 2]]));
+assertNotDeepOrStrict(createSet([{ a: 0 }]), createSet([{ a: 1 }]));
+assertNotDeepOrStrict(createSet([Symbol()]), createSet([Symbol()]));
 
 {
   const a = [ 1, 2 ];
@@ -251,164 +266,164 @@ assertNotDeepOrStrict(new Set([Symbol()]), new Set([Symbol()]));
   const d = [ 3, 4 ];
 
   assertDeepAndStrictEqual(
-    { a: a, b: b, s: new Set([a, b]) },
-    { a: c, b: d, s: new Set([d, c]) }
+    { a: a, b: b, s: createSet([a, b]) },
+    { a: c, b: d, s: createSet([d, c]) }
   );
 }
 
-assertDeepAndStrictEqual(new Map([[1, 1], [2, 2]]), new Map([[1, 1], [2, 2]]));
-assertDeepAndStrictEqual(new Map([[1, 1], [2, 2]]), new Map([[2, 2], [1, 1]]));
-assertNotDeepOrStrict(new Map([[1, 1], [2, 2]]), new Map([[1, 2], [2, 1]]));
+assertDeepAndStrictEqual(createMap([[1, 1], [2, 2]]), createMap([[1, 1], [2, 2]]));
+assertDeepAndStrictEqual(createMap([[1, 1], [2, 2]]), createMap([[2, 2], [1, 1]]));
+assertNotDeepOrStrict(createMap([[1, 1], [2, 2]]), createMap([[1, 2], [2, 1]]));
 assertNotDeepOrStrict(
-  new Map([[[1], 1], [{}, 2]]),
-  new Map([[[1], 2], [{}, 1]])
+  createMap([[[1], 1], [{}, 2]]),
+  createMap([[[1], 2], [{}, 1]])
 );
 
-assertNotDeepOrStrict(new Set([1]), [1]);
-assertNotDeepOrStrict(new Set(), []);
-assertNotDeepOrStrict(new Set(), {});
+assertNotDeepOrStrict(createSet([1]), [1]);
+assertNotDeepOrStrict(createSet(), []);
+assertNotDeepOrStrict(createSet(), {});
 
-assertNotDeepOrStrict(new Map([['a', 1]]), { a: 1 });
-assertNotDeepOrStrict(new Map(), []);
-assertNotDeepOrStrict(new Map(), {});
+assertNotDeepOrStrict(createMap([['a', 1]]), { a: 1 });
+assertNotDeepOrStrict(createMap(), []);
+assertNotDeepOrStrict(createMap(), {});
 
-assertOnlyDeepEqual(new Set(['1']), new Set([1]));
+assertOnlyDeepEqual(createSet(['1']), createSet([1]));
 
-assertOnlyDeepEqual(new Map([['1', 'a']]), new Map([[1, 'a']]));
-assertOnlyDeepEqual(new Map([['a', '1']]), new Map([['a', 1]]));
-assertNotDeepOrStrict(new Map([['a', '1']]), new Map([['a', 2]]));
+assertOnlyDeepEqual(createMap([['1', 'a']]), createMap([[1, 'a']]));
+assertOnlyDeepEqual(createMap([['a', '1']]), createMap([['a', 1]]));
+assertNotDeepOrStrict(createMap([['a', '1']]), createMap([['a', 2]]));
 
-assertDeepAndStrictEqual(new Set([{}]), new Set([{}]));
+assertDeepAndStrictEqual(createSet([{}]), createSet([{}]));
 
 // Ref: https://github.com/nodejs/node/issues/13347
 assertNotDeepOrStrict(
-  new Set([{ a: 1 }, { a: 1 }]),
-  new Set([{ a: 1 }, { a: 2 }])
+  createSet([{ a: 1 }, { a: 1 }]),
+  createSet([{ a: 1 }, { a: 2 }])
 );
 assertNotDeepOrStrict(
-  new Set([{ a: 1 }, { a: 1 }, { a: 2 }]),
-  new Set([{ a: 1 }, { a: 2 }, { a: 2 }])
+  createSet([{ a: 1 }, { a: 1 }, { a: 2 }]),
+  createSet([{ a: 1 }, { a: 2 }, { a: 2 }])
 );
 assertNotDeepOrStrict(
-  new Map([[{ x: 1 }, 5], [{ x: 1 }, 5]]),
-  new Map([[{ x: 1 }, 5], [{ x: 2 }, 5]])
+  createMap([[{ x: 1 }, 5], [{ x: 1 }, 5]]),
+  createMap([[{ x: 1 }, 5], [{ x: 2 }, 5]])
 );
 
-assertNotDeepOrStrict(new Set([3, '3']), new Set([3, 4]));
-assertNotDeepOrStrict(new Map([[3, 0], ['3', 0]]), new Map([[3, 0], [4, 0]]));
+assertNotDeepOrStrict(createSet([3, '3']), createSet([3, 4]));
+assertNotDeepOrStrict(createMap([[3, 0], ['3', 0]]), createMap([[3, 0], [4, 0]]));
 
 assertNotDeepOrStrict(
-  new Set([{ a: 1 }, { a: 1 }, { a: 2 }]),
-  new Set([{ a: 1 }, { a: 2 }, { a: 2 }])
+  createSet([{ a: 1 }, { a: 1 }, { a: 2 }]),
+  createSet([{ a: 1 }, { a: 2 }, { a: 2 }])
 );
 
 // Mixed primitive and object keys
 assertDeepAndStrictEqual(
-  new Map([[1, 'a'], [{}, 'a']]),
-  new Map([[1, 'a'], [{}, 'a']])
+  createMap([[1, 'a'], [{}, 'a']]),
+  createMap([[1, 'a'], [{}, 'a']])
 );
 assertDeepAndStrictEqual(
-  new Set([1, 'a', [{}, 'a']]),
-  new Set([1, 'a', [{}, 'a']])
+  createSet([1, 'a', [{}, 'a']]),
+  createSet([1, 'a', [{}, 'a']])
 );
 
 // This is an awful case, where a map contains multiple equivalent keys:
 assertOnlyDeepEqual(
-  new Map([[1, 'a'], ['1', 'b']]),
-  new Map([['1', 'a'], [true, 'b']])
+  createMap([[1, 'a'], ['1', 'b']]),
+  createMap([['1', 'a'], [true, 'b']])
 );
 assertNotDeepOrStrict(
-  new Set(['a']),
-  new Set(['b'])
+  createSet(['a']),
+  createSet(['b'])
 );
 assertDeepAndStrictEqual(
-  new Map([[{}, 'a'], [{}, 'b']]),
-  new Map([[{}, 'b'], [{}, 'a']])
+  createMap([[{}, 'a'], [{}, 'b']]),
+  createMap([[{}, 'b'], [{}, 'a']])
 );
 assertOnlyDeepEqual(
-  new Map([[true, 'a'], ['1', 'b'], [1, 'a']]),
-  new Map([['1', 'a'], [1, 'b'], [true, 'a']])
+  createMap([[true, 'a'], ['1', 'b'], [1, 'a']]),
+  createMap([['1', 'a'], [1, 'b'], [true, 'a']])
 );
 assertNotDeepOrStrict(
-  new Map([[true, 'a'], ['1', 'b'], [1, 'c']]),
-  new Map([['1', 'a'], [1, 'b'], [true, 'a']])
+  createMap([[true, 'a'], ['1', 'b'], [1, 'c']]),
+  createMap([['1', 'a'], [1, 'b'], [true, 'a']])
 );
 
 // Similar object keys
 assertNotDeepOrStrict(
-  new Set([{}, {}]),
-  new Set([{}, 1])
+  createSet([{}, {}]),
+  createSet([{}, 1])
 );
 assertNotDeepOrStrict(
-  new Set([[{}, 1], [{}, 1]]),
-  new Set([[{}, 1], [1, 1]])
+  createSet([[{}, 1], [{}, 1]]),
+  createSet([[{}, 1], [1, 1]])
 );
 assertNotDeepOrStrict(
-  new Map([[{}, 1], [{}, 1]]),
-  new Map([[{}, 1], [1, 1]])
+  createMap([[{}, 1], [{}, 1]]),
+  createMap([[{}, 1], [1, 1]])
 );
 assertOnlyDeepEqual(
-  new Map([[{}, 1], [true, 1]]),
-  new Map([[{}, 1], [1, 1]])
+  createMap([[{}, 1], [true, 1]]),
+  createMap([[{}, 1], [1, 1]])
 );
 
 // Similar primitive key / values
 assertNotDeepOrStrict(
-  new Set([1, true, false]),
-  new Set(['1', 0, '0'])
+  createSet([1, true, false]),
+  createSet(['1', 0, '0'])
 );
 assertNotDeepOrStrict(
-  new Map([[1, 5], [true, 5], [false, 5]]),
-  new Map([['1', 5], [0, 5], ['0', 5]])
+  createMap([[1, 5], [true, 5], [false, 5]]),
+  createMap([['1', 5], [0, 5], ['0', 5]])
 );
 
 // Undefined value in Map
 assertDeepAndStrictEqual(
-  new Map([[1, undefined]]),
-  new Map([[1, undefined]])
+  createMap([[1, undefined]]),
+  createMap([[1, undefined]])
 );
 assertOnlyDeepEqual(
-  new Map([[1, null], ['', '0']]),
-  new Map([['1', undefined], [false, 0]])
+  createMap([[1, null], ['', '0']]),
+  createMap([['1', undefined], [false, 0]])
 );
 assertNotDeepOrStrict(
-  new Map([[1, undefined]]),
-  new Map([[2, undefined]])
+  createMap([[1, undefined]]),
+  createMap([[2, undefined]])
 );
 
 // null as key
 assertDeepAndStrictEqual(
-  new Map([[null, 3]]),
-  new Map([[null, 3]])
+  createMap([[null, 3]]),
+  createMap([[null, 3]])
 );
 
 if (common.bigIntSupported) {
   assertOnlyDeepEqual(
-    new Map([[undefined, null], eval("['+000', 2n]")]),
-    new Map([[null, undefined], [false, '2']]),
+    createMap([[undefined, null], eval("['+000', 2n]")]),
+    createMap([[null, undefined], [false, '2']]),
   );
 
   assertOnlyDeepEqual(
-    new Set(eval("[null, '', 1n, 5, 2n, false]")),
-    new Set(eval("[undefined, 0, 5n, true, '2', '-000']"))
+    createSet(eval("[null, '', 1n, 5, 2n, false]")),
+    createSet(eval("[undefined, 0, 5n, true, '2', '-000']"))
   );
 }
 
 assertNotDeepOrStrict(
-  new Set(['']),
-  new Set(['0'])
+  createSet(['']),
+  createSet(['0'])
 );
 assertOnlyDeepEqual(
-  new Map([[1, {}]]),
-  new Map([[true, {}]])
+  createMap([[1, {}]]),
+  createMap([[true, {}]])
 );
 assertOnlyDeepEqual(
-  new Map([[undefined, true]]),
-  new Map([[null, true]])
+  createMap([[undefined, true]]),
+  createMap([[null, true]])
 );
 assertNotDeepOrStrict(
-  new Map([[undefined, true]]),
-  new Map([[true, true]])
+  createMap([[undefined, true]]),
+  createMap([[true, true]])
 );
 
 // GH-6416. Make sure circular refs don't throw.
@@ -441,9 +456,9 @@ assertNotDeepOrStrict(
 }
 
 {
-  const a = new Set();
-  const b = new Set();
-  const c = new Set();
+  const a = createSet();
+  const b = createSet();
+  const c = createSet();
   a.add(a);
   b.add(b);
   c.add(a);
@@ -485,17 +500,17 @@ assertNotDeepOrStrict(
     [],
     () => {},
   ];
-  assertDeepAndStrictEqual(new Set(values), new Set(values));
-  assertDeepAndStrictEqual(new Set(values), new Set(values.reverse()));
+  assertDeepAndStrictEqual(createSet(values), createSet(values));
+  assertDeepAndStrictEqual(createSet(values), createSet(values.reverse()));
 
   const mapValues = values.map((v) => [v, { a: 5 }]);
-  assertDeepAndStrictEqual(new Map(mapValues), new Map(mapValues));
-  assertDeepAndStrictEqual(new Map(mapValues), new Map(mapValues.reverse()));
+  assertDeepAndStrictEqual(createMap(mapValues), createMap(mapValues));
+  assertDeepAndStrictEqual(createMap(mapValues), createMap(mapValues.reverse()));
 }
 
 {
-  const s1 = new Set();
-  const s2 = new Set();
+  const s1 = createSet();
+  const s2 = createSet();
   s1.add(1);
   s1.add(2);
   s2.add(2);
@@ -504,8 +519,8 @@ assertNotDeepOrStrict(
 }
 
 {
-  const m1 = new Map();
-  const m2 = new Map();
+  const m1 = createMap();
+  const m2 = createMap();
   const obj = { a: 5, b: 6 };
   m1.set(1, obj);
   m1.set(2, 'hi');
@@ -519,19 +534,19 @@ assertNotDeepOrStrict(
 }
 
 {
-  const m1 = new Map();
-  const m2 = new Map();
+  const m1 = createMap();
+  const m2 = createMap();
 
   // m1 contains itself.
   m1.set(1, m1);
-  m2.set(1, new Map());
+  m2.set(1, createMap());
 
   assertNotDeepOrStrict(m1, m2);
 }
 
 {
-  const map1 = new Map([[1, 1]]);
-  const map2 = new Map([[1, '1']]);
+  const map1 = createMap([[1, 1]]);
+  const map2 = createMap([[1, '1']]);
   assert.deepEqual(map1, map2);
   assert.throws(
     () => assert.deepStrictEqual(map1, map2),
@@ -547,34 +562,34 @@ assertNotDeepOrStrict(
   // Two equivalent sets / maps with different key/values applied shouldn't be
   // the same. This is a terrible idea to do in practice, but deepEqual should
   // still check for it.
-  const s1 = new Set();
-  const s2 = new Set();
+  const s1 = createSet();
+  const s2 = createSet();
   s1.x = 5;
   assertNotDeepOrStrict(s1, s2);
 
-  const m1 = new Map();
-  const m2 = new Map();
+  const m1 = createMap();
+  const m2 = createMap();
   m1.x = 5;
   assertNotDeepOrStrict(m1, m2);
 }
 
 {
   // Circular references.
-  const s1 = new Set();
+  const s1 = createSet();
   s1.add(s1);
-  const s2 = new Set();
+  const s2 = createSet();
   s2.add(s2);
   assertDeepAndStrictEqual(s1, s2);
 
-  const m1 = new Map();
+  const m1 = createMap();
   m1.set(2, m1);
-  const m2 = new Map();
+  const m2 = createMap();
   m2.set(2, m2);
   assertDeepAndStrictEqual(m1, m2);
 
-  const m3 = new Map();
+  const m3 = createMap();
   m3.set(m3, 2);
-  const m4 = new Map();
+  const m4 = createMap();
   m4.set(m4, 2);
   assertDeepAndStrictEqual(m3, m4);
 }
