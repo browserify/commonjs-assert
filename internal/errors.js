@@ -94,7 +94,7 @@ createErrorType('ERR_INVALID_ARG_TYPE',
 
     // determiner: 'must be' or 'must not be'
     let determiner;
-    if (typeof expected === 'string' && expected.startsWith('not ')) {
+    if (typeof expected === 'string' && startsWith(expected, 'not ')) {
       determiner = 'must not be';
       expected = expected.replace(/^not /, '');
     } else {
