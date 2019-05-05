@@ -284,7 +284,9 @@ testShortAssertionMessage(Infinity, 'Infinity');
 testShortAssertionMessage('a', '"a"');
 testShortAssertionMessage('foo', '\'foo\'');
 testShortAssertionMessage(0, '0');
-testShortAssertionMessage(Symbol(), 'Symbol()');
+if (common.symbolSupported) {
+  testShortAssertionMessage(Symbol(), 'Symbol()');
+}
 testAssertionMessage([], '[]');
 testAssertionMessage(/a/, '/a/');
 testAssertionMessage(/abc/gim, '/abc/gim');
@@ -400,7 +402,7 @@ assert.throws(() => {
   //          `+ '${'A'.repeat(1000)}'\n- ''`
 });
 
-{
+if (common.symbolSupported) {
   // Bad args to AssertionError constructor should throw TypeError.
   const args = [1, true, false, '', null, Infinity, Symbol('test'), undefined];
   args.forEach((input) => {
@@ -662,15 +664,17 @@ common.expectsError(
   }
 );
 
-common.expectsError(
-  () => assert(false, Symbol('foo')),
-  {
-    code: 'ERR_ASSERTION',
-    // type: assert.AssertionError,
-    generatedMessage: false,
-    // message: 'Symbol(foo)'
-  }
-);
+if (common.symbolSupported) {
+  common.expectsError(
+    () => assert(false, Symbol('foo')),
+    {
+      code: 'ERR_ASSERTION',
+      // type: assert.AssertionError,
+      generatedMessage: false,
+      // message: 'Symbol(foo)'
+    }
+  );
+}
 
 // [browserify]
 // This test uses internal Node.js functionality so we have to skip it.
@@ -862,20 +866,22 @@ common.expectsError(
   }
 );
 
-[
-  1,
-  false,
-  Symbol()
-].forEach((input) => {
-  assert.throws(
-    () => assert.throws(() => {}, input),
-    {
-      code: 'ERR_INVALID_ARG_TYPE',
-      // message: 'The "error" argument must be one of type Object, Error, ' +
-      //          `Function, or RegExp. Received type ${typeof input}`
-    }
-  );
-});
+if (common.symbolSupported) {
+  [
+    1,
+    false,
+    Symbol()
+  ].forEach((input) => {
+    assert.throws(
+      () => assert.throws(() => {}, input),
+      {
+        code: 'ERR_INVALID_ARG_TYPE',
+        // message: 'The "error" argument must be one of type Object, Error, ' +
+        //          `Function, or RegExp. Received type ${typeof input}`
+      }
+    );
+  });
+}
 
 {
 
@@ -1199,10 +1205,12 @@ assert.throws(
   { code: 'ERR_MISSING_ARGS' }
 );
 
-assert.throws(
-  () => a.deepStrictEqual(Symbol()),
-  { code: 'ERR_MISSING_ARGS' }
-);
+if (common.symbolSupported) {
+  assert.throws(
+    () => a.deepStrictEqual(Symbol()),
+    { code: 'ERR_MISSING_ARGS' }
+  );
+}
 
 if (common.bigIntSupported) {
   assert.throws(
