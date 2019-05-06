@@ -46,7 +46,7 @@ Builds the source files into the `build` dir and then runs the tests against the
 
 Runs the tests against the built project without rebuilding first.
 
-This is useful if your debugging in the transpiled code and want to re-run the tests without overwriting any changes you may have made.
+This is useful if you're debugging in the transpiled code and want to re-run the tests without overwriting any changes you may have made.
 
 ### `npm run test:source`
 
