@@ -1,6 +1,10 @@
 // Currently in sync with Node.js test/parallel/test-assert-if-error.js
 // https://github.com/nodejs/node/commit/644fdd60d4be49ffa66d0bda1702c4459f607635
 
+// [browserify]
+// Most `err.message` and `err.stack` tests are commented out because they are
+// inconsistent between browsers.
+
 'use strict';
 
 require('../common');
@@ -86,7 +90,6 @@ assert.ifError(undefined);
   } catch (e) {
     threw = true;
     assert.strictEqual(e.message, 'Missing expected exception.');
-    // [browserify] Don't worry if stack is missing info
     // assert(!e.stack.includes('throws'), e.stack);
   }
   assert(threw);

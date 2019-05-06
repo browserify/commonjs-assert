@@ -24,6 +24,8 @@ try {
     '\u001b[34m...\u001b[39m\n' +
     '    2\n' +
     '  ]';
+  // [browserify]
+  // Don't test the exact message, it's inconstent between browsers.
   // assert.strictEqual(err.message, expected);
   if(process.stderr && process.stderr.getColorDepth) {
     assert(err.message.indexOf('[32m') > -1);

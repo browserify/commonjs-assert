@@ -23,6 +23,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// [browserify]
+// Most `err.message` and `err.stack` tests are commented out because they are
+// inconsistent between browsers.
+//
+// `err.operator` tests are commented out because its always `undefined` in IE.
+// If we drop IE support we can uncomment these tests.
+
 'use strict';
 
 const arrayFill = require('array-fill');

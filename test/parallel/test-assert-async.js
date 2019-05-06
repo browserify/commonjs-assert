@@ -1,6 +1,13 @@
 // Currently in sync with Node.js test/parallel/test-assert-async.js
 // https://github.com/nodejs/node/commit/2a51ae424a513ec9a6aa3466baa0cc1d55dd4f3b
 
+// [browserify]
+// Most `err.message` and `err.stack` tests are commented out because they are
+// inconsistent between browsers.
+//
+// `err.operator` tests are commented out because its always `undefined` in IE.
+// If we drop IE support we can uncomment these tests.
+
 'use strict';
 const common = require('../common');
 const assert = require('../../assert');
@@ -78,7 +85,6 @@ const invalidThenableFunc = () => {
     assert.strictEqual(err.code, 'ERR_ASSERTION');
     // assert.strictEqual(err.message,
     //                    'Missing expected rejection (mustNotCall).');
-    // [browserify] This will be undefined in IE
     // assert.strictEqual(err.operator, 'rejects');
     assert.ok(!common.includes(err.stack, 'at Function.rejects'));
     return true;
@@ -202,7 +208,6 @@ promises.push(assert.rejects(
     assert.strictEqual(err.code, 'ERR_ASSERTION');
     assert.strictEqual(err.actual, actual);
     // assert.strictEqual(err.operator, 'rejects');
-    // [browserify] Don't worry if the stack is less reliable
     // assert(/rejects/.test(err.stack));
     return true;
   };

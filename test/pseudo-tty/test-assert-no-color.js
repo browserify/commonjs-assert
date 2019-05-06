@@ -18,6 +18,8 @@ try {
     '- {\n' +
     '-   foo: \'bar\'\n' +
     '- }';
+  // [browserify]
+  // Don't test the exact message, it's inconstent between browsers.
   // assert.strictEqual(error.message, expected);
   assert(error.message.indexOf('[32m') === -1);
 }

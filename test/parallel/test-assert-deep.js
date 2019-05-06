@@ -1,6 +1,10 @@
 // Currently in sync with Node.js test/parallel/test-assert-deep.js
 // https://github.com/nodejs/node/commit/1ed3c54ecbd72a33693e5954f86bcc9fd9b1cc09
 
+// [browserify]
+// Most `err.message` tests are commented out because they are
+// inconsistent between browsers.
+
 'use strict';
 
 const common = require('../common');
@@ -965,8 +969,7 @@ assert.deepStrictEqual(obj1, obj2);
     util.inspect.defaultOptions = tmp;
   }
 
-  // [browserify] Safari fails this test. I'm not sure why, Chrome and Firefox pass.
-  // @BridgeAR is it ok to comment out this test?
+  // [browserify] Safari fails this test due to the proxy. Chrome and Firefox pass.
   // const invalidTrap = new Proxy([1, 2, 3], {
   //   ownKeys() { return []; }
   // });

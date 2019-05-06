@@ -1,6 +1,10 @@
 // Currently in sync with Node.js test/parallel/test-assert-checktag.js
 // https://github.com/nodejs/node/commit/7493db21b667ed746d39c9b54357eac4287232e3
 
+// [browserify]
+// Most `err.message` tests are commented out because they are
+// inconsistent between browsers.
+
 'use strict';
 const {isBrowser} = require('../common');
 const assert = require('../../assert');
