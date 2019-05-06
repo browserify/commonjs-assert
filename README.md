@@ -2,9 +2,9 @@
 
 > The [`assert`](https://nodejs.org/api/assert.html) module from Node.js, for the browser.
 
-[![Build Status](https://travis-ci.org/browserify/commonjs-assert.svg?branch=sync-with-node-master)](https://travis-ci.org/browserify/commonjs-assert)
-[![npm](https://img.shields.io/npm/dm/create-xpub.svg)](https://www.npmjs.com/package/create-xpub)
-[![npm](https://img.shields.io/npm/v/create-xpub.svg)](https://www.npmjs.com/package/create-xpub)
+[![Build Status](https://travis-ci.org/browserify/commonjs-assert.svg?branch=master)](https://travis-ci.org/browserify/commonjs-assert)
+[![npm](https://img.shields.io/npm/dm/commonjs-assert.svg)](https://www.npmjs.com/package/commonjs-assert)
+[![npm](https://img.shields.io/npm/v/commonjs-assert.svg)](https://www.npmjs.com/package/commonjs-assert)
 
 With browserify, simply `require('assert')` or use the `assert` global and you will get this module.
 
@@ -15,7 +15,7 @@ The goal is to provide an API that is as functionally identical to the [Node.js 
 To use this module directly (without browserify), install it as a dependency:
 
 ```
-npm install buffer
+npm install assert
 ```
 
 ## Usage
@@ -24,7 +24,7 @@ The goal is to provide an API that is as functionally identical to the [Node.js 
 
 ### Inconsistencies with Node.js `assert`
 
-// TODO
+Due to differences between browsers, some error properties such as `message` and `stack` will be inconsistent. However the assertion behaviour is as close as possible to Node.js and the same error `code` will always be used.
 
 ## Contributing
 
