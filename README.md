@@ -30,37 +30,39 @@ Due to differences between browsers, some error properties such as `message` and
 
 To contribute, work on the source files. Then build and run the tests against the built files. Be careful to not introduce syntax that will be transpiled down to unsupported syntax. For example, `for...of` loops will be transpiled to use `Symbol.iterator` which is unavailable in IE.
 
-### `npm run build`
+### Build scripts
+
+#### `npm run build`
 
 Builds the project into the `build` dir.
 
-### `npm run dev`
+#### `npm run dev`
 
 Watches source files for changes and rebuilds them into the `build` dir.
 
-### `npm run test`
+#### `npm run test`
 
 Builds the source files into the `build` dir and then runs the tests against the built project.
 
-### `npm run test:nobuild`
+#### `npm run test:nobuild`
 
 Runs the tests against the built project without rebuilding first.
 
 This is useful if you're debugging in the transpiled code and want to re-run the tests without overwriting any changes you may have made.
 
-### `npm run test:source`
+#### `npm run test:source`
 
 Runs the tests against the unbuilt source files.
 
 This will only work on modern Node.js versions.
 
-### `npm run test:browsers`
+#### `npm run test:browsers`
 
 Run browser tests against the all targets in the cloud.
 
 Requires airtap credentials to be configured on your machine.
 
-### `npm run test:browsers:local`
+#### `npm run test:browsers:local`
 
 Run a local browser test server. No airtap configuration required.
 
