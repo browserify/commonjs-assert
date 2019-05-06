@@ -3,8 +3,8 @@
 > The [`assert`](https://nodejs.org/api/assert.html) module from Node.js, for the browser.
 
 [![Build Status](https://travis-ci.org/browserify/commonjs-assert.svg?branch=master)](https://travis-ci.org/browserify/commonjs-assert)
-[![npm](https://img.shields.io/npm/dm/commonjs-assert.svg)](https://www.npmjs.com/package/commonjs-assert)
-[![npm](https://img.shields.io/npm/v/commonjs-assert.svg)](https://www.npmjs.com/package/commonjs-assert)
+[![npm](https://img.shields.io/npm/dm/assert.svg)](https://www.npmjs.com/package/assert)
+[![npm](https://img.shields.io/npm/v/assert.svg)](https://www.npmjs.com/package/assert)
 
 With browserify, simply `require('assert')` or use the `assert` global and you will get this module.
 
