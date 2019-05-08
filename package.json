@@ -1,7 +1,7 @@
 {
   "name": "assert",
   "description": "The node.js assert module, re-packaged for web browsers.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "dependencies": {
     "object.assign": "^4.1.4",
     "util": "^0.10.4"
