@@ -31,7 +31,6 @@ const hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
 const propertyIsEnumerable = uncurryThis(Object.prototype.propertyIsEnumerable);
 const objectToString = uncurryThis(Object.prototype.toString);
 
-const { compare } = require('buffer/').Buffer;
 const {
   isAnyArrayBuffer,
   isArrayBufferView,
@@ -69,6 +68,39 @@ function getOwnNonIndexProperties(value) {
       objectGetOwnPropertySymbols(value)
         .filter(Object.prototype.propertyIsEnumerable.bind(value))
     );
+}
+
+// Taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
+// original notice:
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+function compare(a, b) {
+  if (a === b) {
+    return 0;
+  }
+
+  var x = a.length;
+  var y = b.length;
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i];
+      y = b[i];
+      break;
+    }
+  }
+
+  if (x < y) {
+    return -1;
+  }
+  if (y < x) {
+    return 1;
+  }
+  return 0;
 }
 
 const ONLY_ENUMERABLE = undefined;
