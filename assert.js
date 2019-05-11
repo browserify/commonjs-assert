@@ -130,7 +130,7 @@ assert.AssertionError = function AssertionError(options) {
   this.expected = options.expected;
   this.operator = options.operator;
   if (options.message) {
-    if (options.message instanceof Function) {
+    if (typeof options.message === 'function') {
       options.message = options.message();
     }
     this.message = options.message;
