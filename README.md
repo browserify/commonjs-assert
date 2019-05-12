@@ -1,105 +1,73 @@
 # assert
 
+> The [`assert`](https://nodejs.org/api/assert.html) module from Node.js, for the browser.
+
 [![Build Status](https://travis-ci.org/browserify/commonjs-assert.svg?branch=master)](https://travis-ci.org/browserify/commonjs-assert)
+[![npm](https://img.shields.io/npm/dm/assert.svg)](https://www.npmjs.com/package/assert)
+[![npm](https://img.shields.io/npm/v/assert.svg)](https://www.npmjs.com/package/assert)
 
-This module is used for writing unit tests for your applications, you can access it with `require('assert')`.
+With browserify, simply `require('assert')` or use the `assert` global and you will get this module.
 
-It aims to be fully compatibe with the [node.js assert module](http://nodejs.org/api/assert.html), same API and same behavior, just adding support for web browsers.
-The API and code may contain traces of the [CommonJS Unit Testing 1.0 spec](http://wiki.commonjs.org/wiki/Unit_Testing/1.0) which they were based on, but both have evolved significantly since then.
+The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs](https://nodejs.org/api/assert.html) for API documentation.
 
-A `strict` and a `legacy` mode exist, while it is recommended to only use `strict mode`.
+## Install
 
-## Strict mode
+To use this module directly (without browserify), install it as a dependency:
 
-When using the `strict mode`, any `assert` function will use the equality used in the strict function mode. So `assert.deepEqual()` will, for example, work the same as `assert.deepStrictEqual()`.
-
-It can be accessed using:
-
-```js
-const assert = require('assert').strict;
+```
+npm install assert
 ```
 
-## Legacy mode
+## Usage
 
-> Deprecated: Use strict mode instead.
+The goal is to provide an API that is as functionally identical to the [Node.js `assert` API](https://nodejs.org/api/assert.html) as possible. Read the [official docs](https://nodejs.org/api/assert.html) for API documentation.
 
-When accessing `assert` directly instead of using the `strict` property, the
-[Abstract Equality Comparison](https://tc39.github.io/ecma262/#sec-abstract-equality-comparison) will be used for any function without a
-"strict" in its name (e.g. `assert.deepEqual()`).
+### Inconsistencies with Node.js `assert`
 
-It can be accessed using:
+Due to differences between browsers, some error properties such as `message` and `stack` will be inconsistent. However the assertion behaviour is as close as possible to Node.js and the same error `code` will always be used.
 
-```js
-const assert = require('assert');
-```
+## Contributing
 
-It is recommended to use the `strict mode` instead as the Abstract Equality Comparison can often have surprising results. Especially
-in case of `assert.deepEqual()` as the used comparison rules there are very lax.
+To contribute, work on the source files. Then build and run the tests against the built files. Be careful to not introduce syntax that will be transpiled down to unsupported syntax. For example, `for...of` loops will be transpiled to use `Symbol.iterator` which is unavailable in IE.
 
-E.g.
+### Build scripts
 
-```js
-// WARNING: This does not throw an AssertionError!
-assert.deepEqual(/a/gi, new Date());
-```
+#### `npm run build`
 
+Builds the project into the `build` dir.
 
-## assert.fail(actual, expected, message, operator)
-Throws an exception that displays the values for actual and expected separated by the provided operator.
+#### `npm run dev`
 
-## assert(value, message), assert.ok(value, [message])
-Tests if value is truthy, it is equivalent to assert.equal(true, !!value, message);
+Watches source files for changes and rebuilds them into the `build` dir.
 
-## assert.equal(actual, expected, [message])
-Tests shallow, coercive equality with the equal comparison operator ( == ).
+#### `npm run test`
 
-## assert.notEqual(actual, expected, [message])
-Tests shallow, coercive non-equality with the not equal comparison operator ( != ).
+Builds the source files into the `build` dir and then runs the tests against the built project.
 
-## assert.deepEqual(actual, expected, [message])
-Tests for deep equality.
+#### `npm run test:nobuild`
 
-## assert.deepStrictEqual(actual, expected, [message])
-Tests for deep equality, as determined by the strict equality operator ( === )
+Runs the tests against the built project without rebuilding first.
 
-## assert.notDeepEqual(actual, expected, [message])
-Tests for any deep inequality.
+This is useful if you're debugging in the transpiled code and want to re-run the tests without overwriting any changes you may have made.
 
-## assert.strictEqual(actual, expected, [message])
-Tests strict equality, as determined by the strict equality operator ( === )
+#### `npm run test:source`
 
-## assert.notStrictEqual(actual, expected, [message])
-Tests strict non-equality, as determined by the strict not equal operator ( !== )
+Runs the tests against the unbuilt source files.
 
-## assert.throws(block, [error], [message])
-Expects block to throw an error. error can be constructor, regexp or validation function.
+This will only work on modern Node.js versions.
 
-Validate instanceof using constructor:
+#### `npm run test:browsers`
 
-```javascript
-assert.throws(function() { throw new Error("Wrong value"); }, Error);
-```
+Run browser tests against the all targets in the cloud.
 
-Validate error message using RegExp:
+Requires airtap credentials to be configured on your machine.
 
-```javascript
-assert.throws(function() { throw new Error("Wrong value"); }, /value/);
-```
+#### `npm run test:browsers:local`
 
-Custom error validation:
+Run a local browser test server. No airtap configuration required.
 
-```javascript
-assert.throws(function() {
-    throw new Error("Wrong value");
-}, function(err) {
-    if ( (err instanceof Error) && /value/.test(err) ) {
-        return true;
-    }
-}, "unexpected error");
-```
+When paired with `npm run dev` any changes you make to the source files will be automatically transpiled and served on the next request to the test server.
 
-## assert.doesNotThrow(block, [message])
-Expects block not to throw an error, see assert.throws for details.
+## License
 
-## assert.ifError(value)
-Tests if value is not a false value, throws if it is a true value. Useful when testing the first argument, error in callbacks.
+MIT © Joyent, Inc. and other Node contributors
