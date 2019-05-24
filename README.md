@@ -12,7 +12,7 @@ The goal is to provide an API that is as functionally identical to the [Node.js 
 
 > `assert` supports modern browsers. Older browsers may require shimming functionality.
 > In Internet Explorer and other environments without `Promise`, the `throws`/`rejects` family of methods requires a Promise shim.
-> In Internet Explorer 8-10, the shim and sham versions of [es5-shim](https://github.com/es-shims/es5-shim) are also required.
+> In Internet Explorer 8, the shim and sham versions of [es5-shim](https://github.com/es-shims/es5-shim) are also required.
 
 ## Install
 
