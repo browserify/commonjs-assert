@@ -37,6 +37,8 @@ const { isPromise, isRegExp } = require('util/').types;
 const objectAssign = Object.assign ? Object.assign : require('es6-object-assign').assign;
 const objectIs = Object.is ? Object.is : require('object-is');
 
+const RegExpPrototypeTest = require('call-bind/callBound')('RegExp.prototype.test');
+
 const errorCache = new Map();
 
 let isDeepEqual;
@@ -308,7 +310,7 @@ class Comparison {
         if (actual !== undefined &&
           typeof actual[key] === 'string' &&
           isRegExp(obj[key]) &&
-          obj[key].test(actual[key])
+          RegExpPrototypeTest(obj[key], actual[key])
         ) {
           this[key] = actual[key];
         } else {
@@ -350,7 +352,7 @@ function compareExceptionKey(actual, expected, key, message, keys, fn) {
 function expectedException(actual, expected, msg, fn) {
   if (typeof expected !== 'function') {
     if (isRegExp(expected))
-      return expected.test(actual);
+      return RegExpPrototypeTest(expected, actual);
     // assert.doesNotThrow does not accept objects.
     if (arguments.length === 2) {
       throw new ERR_INVALID_ARG_TYPE(
@@ -385,7 +387,7 @@ function expectedException(actual, expected, msg, fn) {
       if (
         typeof actual[key] === 'string' &&
         isRegExp(expected[key]) &&
-        expected[key].test(actual[key])
+        RegExpPrototypeTest(expected[key], actual[key])
       ) {
         return;
       }
@@ -594,6 +596,51 @@ assert.ifError = function ifError(err) {
 
     throw newErr;
   }
+};
+
+// Currently in sync with Node.js lib/assert.js
+// https://github.com/nodejs/node/commit/2a871df3dfb8ea663ef5e1f8f62701ec51384ecb
+function internalMatch(string, regexp, message, fn, fnName) {
+  if (!isRegExp(regexp)) {
+    throw new ERR_INVALID_ARG_TYPE(
+      'regexp', 'RegExp', regexp
+    );
+  }
+  const match = fnName === 'match';
+  if (typeof string !== 'string' ||
+      RegExpPrototypeTest(regexp, string) !== match) {
+    if (message instanceof Error) {
+      throw message;
+    }
+
+    const generatedMessage = !message;
+
+    // 'The input was expected to not match the regular expression ' +
+    message = message || (typeof string !== 'string' ?
+      'The "string" argument must be of type string. Received type ' +
+        `${typeof string} (${inspect(string)})` :
+      (match ?
+        'The input did not match the regular expression ' :
+        'The input was expected to not match the regular expression ') +
+          `${inspect(regexp)}. Input:\n\n${inspect(string)}\n`);
+    const err = new AssertionError({
+      actual: string,
+      expected: regexp,
+      message,
+      operator: fnName,
+      stackStartFn: fn
+    });
+    err.generatedMessage = generatedMessage;
+    throw err;
+  }
+}
+
+assert.match = function match(string, regexp, message) {
+  internalMatch(string, regexp, message, match, 'match');
+};
+
+assert.doesNotMatch = function doesNotMatch(string, regexp, message) {
+  internalMatch(string, regexp, message, doesNotMatch, 'doesNotMatch');
 };
 
 // Expose a strict only variant of assert
