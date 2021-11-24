@@ -13,6 +13,7 @@ const testPaths = [
   ['test-assert-fail-deprecation.js', () => require('./test/parallel/test-assert-fail-deprecation.js')],
   ['test-assert-fail.js', () => require('./test/parallel/test-assert-fail.js')],
   ['test-assert-if-error.js', () => require('./test/parallel/test-assert-if-error.js')],
+  ['test-assert-match.js', () => require('./test/parallel/test-assert-match.js')],
   ['test-assert-typedarray-deepequal.js', () => require('./test/parallel/test-assert-typedarray-deepequal.js')],
   ['test-assert.js', () => require('./test/parallel/test-assert.js')],
   ['test-assert-colors.js', () => require('./test/pseudo-tty/test-assert-colors.js')],
