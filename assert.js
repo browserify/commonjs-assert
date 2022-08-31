@@ -101,7 +101,7 @@ function fail(actual, expected, message, operator, stackStartFn) {
   } else {
     if (warned === false) {
       warned = true;
-      const warn = process.emitWarning ? process.emitWarning : console.warn.bind(console);
+      const warn = process && process.emitWarning ? process.emitWarning : console.warn.bind(console);
       warn(
         'assert.fail() with more than one argument is deprecated. ' +
           'Please use assert.strictEqual() instead or only pass a message.',
