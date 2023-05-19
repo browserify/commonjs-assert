@@ -9,7 +9,7 @@
 
 const common = require('../common');
 const assert = require('../../assert');
-const util = require('util/');
+const util = require('util');
 const { AssertionError } = assert;
 const defaultMsgStart = 'Expected values to be strictly deep-equal:\n';
 const defaultMsgStartFull = `${defaultMsgStart}+ actual - expected`;

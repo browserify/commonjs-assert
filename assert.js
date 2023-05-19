@@ -31,8 +31,8 @@ const { codes: {
   ERR_MISSING_ARGS
 } } = require('./internal/errors');
 const AssertionError = require('./internal/assert/assertion_error');
-const { inspect } = require('util/');
-const { isPromise, isRegExp } = require('util/').types;
+const { inspect } = require('util');
+const { isPromise, isRegExp } = require('util').types;
 
 const objectAssign = Object.assign ? Object.assign : require('es6-object-assign').assign;
 const objectIs = Object.is ? Object.is : require('object-is');

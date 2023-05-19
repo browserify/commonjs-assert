@@ -3,7 +3,7 @@
 
 'use strict';
 
-const { inspect } = require('util/');
+const { inspect } = require('util');
 const { codes: {
   ERR_INVALID_ARG_TYPE
 } } = require('../errors');
