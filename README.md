@@ -22,6 +22,12 @@ npm install assert
 
 Due to differences between browsers, some error properties such as `message` and `stack` will be inconsistent. However the assertion behaviour is as close as possible to Node.js and the same error `code` will always be used.
 
+## Usage with bundlers that don't automatically include polyfills for Node.js APIs
+
+Bundlers like `webpack 5` and `Vite.js` (and possibly others) don't automatically include polyfills for Node.js APIs. Like most packages on npm, this module depends on other Node.js APIs, so it won't work with these bundlers without also including a polyfill for the `process` Node.js global. You can use [this library](https://github.com/defunctzombie/node-process) to polyfill the `process` global.
+
+Note that this is not a flaw in this package - this package will work without any manual configuration with `browserify` and `webpack 4` and other working bundlers. Unfortunately, some bundlers decided to require an explicit allow-list of all Node.js API specific packages instead of having them work out of the box, hence the incompatibility. See https://github.com/browserify/commonjs-assert/issues/55 for some more context.
+
 ## Contributing
 
 To contribute, work on the source files. Then build and run the tests against the built files. Be careful to not introduce syntax that will be transpiled down to unsupported syntax. For example, `for...of` loops will be transpiled to use `Symbol.iterator` which is unavailable in IE.
