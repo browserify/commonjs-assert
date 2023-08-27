@@ -1,9 +1,9 @@
 language: node_js
+arch:
+  - amd64
+  - ppc64le
 node_js:
   - 'stable'
-  - '12'
-  - '10'
-  - '8'
   - '6'
 script:
   - 'npm test'
