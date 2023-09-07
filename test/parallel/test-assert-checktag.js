@@ -9,6 +9,8 @@
 const {isBrowser} = require('../common');
 const assert = require('../../assert');
 
+const isNode14 = process.versions.node.indexOf('.') > 1 && process.versions.node.slice(0, 2) >= 14;
+
 // Disable colored output to prevent color codes from breaking assertion
 // message comparisons. This should only be an issue when process.stdout
 // is a TTY.
@@ -16,7 +18,7 @@ if (process.stdout && process.stdout.isTTY)
   process.env.NODE_DISABLE_COLORS = '1';
 
 // Turn off no-restricted-properties because we are testing deepEqual!
-/* eslint-disable no-restricted-properties */
+
 
 // See https://github.com/nodejs/node/issues/10258
 {
@@ -46,7 +48,7 @@ if (process.stdout && process.stdout.isTTY)
   );
 }
 
-if (!isBrowser) {  // At the moment global has its own type tag
+if (!isBrowser && isNode14) {  // At the moment global has its own type tag
   const fakeGlobal = {};
   Object.setPrototypeOf(fakeGlobal, Object.getPrototypeOf(global));
   Object.keys(global).forEach(prop => {
@@ -59,7 +61,7 @@ if (!isBrowser) {  // At the moment global has its own type tag
 }
 
 
-if (!isBrowser) { // At the moment process has its own type tag
+if (!isBrowser && isNode14) { // At the moment process has its own type tag
   const fakeProcess = {};
   Object.setPrototypeOf(fakeProcess, Object.getPrototypeOf(process));
   Object.keys(process).forEach(prop => {
