@@ -34,8 +34,8 @@ const AssertionError = require('./internal/assert/assertion_error');
 const { inspect } = require('util/');
 const { isPromise, isRegExp } = require('util/').types;
 
-const objectAssign = Object.assign ? Object.assign : require('es6-object-assign').assign;
-const objectIs = Object.is ? Object.is : require('object-is');
+const objectAssign = require('object.assign/polyfill')();
+const objectIs = require('object-is/polyfill')();
 
 const RegExpPrototypeTest = require('call-bind/callBound')('RegExp.prototype.test');
 
