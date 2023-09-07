@@ -1,10 +1,6 @@
 // Currently in sync with Node.js lib/internal/errors.js
 // https://github.com/nodejs/node/commit/3b044962c48fe313905877a96b5d0894a5404f6f
 
-/* eslint node-core/documented-errors: "error" */
-/* eslint node-core/alphabetize-errors: "error" */
-/* eslint node-core/prefer-util-format-errors: "error" */
-
 'use strict';
 
 // The whole point behind this internal module is to allow Node.js to no

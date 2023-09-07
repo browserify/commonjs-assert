@@ -1,3 +1,5 @@
+'use strict';
+
 const test = require('tape');
 
 // Conditionally load polyfills required for testing
@@ -18,19 +20,19 @@ const testPaths = [
   ['test-assert.js', () => require('./test/parallel/test-assert.js')],
   ['test-assert-colors.js', () => require('./test/pseudo-tty/test-assert-colors.js')],
   ['test-assert-no-color.js', () => require('./test/pseudo-tty/test-assert-no-color.js')],
-  ['test-assert-position-indicator.js', () => require('./test/pseudo-tty/test-assert-position-indicator.js')]
+  ['test-assert-position-indicator.js', () => require('./test/pseudo-tty/test-assert-position-indicator.js')],
 ];
 
 testPaths.forEach(([testName, requireTest]) => {
-  test(testName, t => {
-    t.plan(2)
+  test(testName, (t) => {
+    t.plan(2);
     let result;
     t.doesNotThrow(() => {
       result = requireTest();
     });
     Promise.resolve(result)
       .then(() => false)
-      .catch(error => error)
-      .then(resolved => t.error(resolved, 'should not resolve to rejected Promise'));
+      .catch((error) => error)
+      .then((resolved) => t.error(resolved, 'should not resolve to rejected Promise'));
   });
 });
