@@ -3,8 +3,8 @@
   "description": "The node.js assert module, re-packaged for web browsers.",
   "version": "1.5.0",
   "dependencies": {
-    "object-assign": "^4.1.1",
-    "util": "0.10.3"
+    "object.assign": "^4.1.4",
+    "util": "^0.10.4"
   },
   "devDependencies": {
     "mocha": "~1.21.4",
