@@ -25,16 +25,16 @@
     "browser"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "airtap": "^2.0.2",
+    "@babel/cli": "^7.22.15",
+    "@babel/core": "^7.22.15",
+    "@babel/preset-env": "^7.22.15",
+    "airtap": "^2.0.4",
     "array-fill": "^1.2.0",
-    "core-js": "^3.0.1",
-    "cross-env": "^5.2.0",
-    "object.entries": "^1.1.0",
-    "object.getownpropertydescriptors": "^2.0.3",
-    "tape": "^4.10.1"
+    "core-js": "^3.32.2",
+    "cross-env": "^5.2.1",
+    "object.entries": "^1.1.7",
+    "object.getownpropertydescriptors": "^2.1.7",
+    "tape": "^5.6.6"
   },
   "dependencies": {
     "call-bind": "^1.0.2",

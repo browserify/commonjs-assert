@@ -1,12 +1,8 @@
 const assert = require('../../assert');
 
-const getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors
-  ? Object.getOwnPropertyDescriptors
-  : require('object.getownpropertydescriptors');
+const getOwnPropertyDescriptors = require('object.getownpropertydescriptors/polyfill')();
 
-const objectEntries = Object.entries
-  ? Object.entries
-  : require('object.entries');
+const objectEntries = require('object.entries/polyfill')();
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
 function repeat(str, count) {
