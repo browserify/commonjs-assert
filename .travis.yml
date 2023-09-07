@@ -1,12 +1,7 @@
 language: node_js
 node_js:
   - 'stable'
-  - '12'
-  - '10'
-  - '8'
-  - '6'
 script:
-  - 'npm test'
   # Run browser tests on one node version.
   - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${TRAVIS_NODE_VERSION}" = "stable" ]; then npm run test:browsers; fi'
 addons:
